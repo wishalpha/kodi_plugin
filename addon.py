@@ -235,8 +235,6 @@ def retrive_video_info(url,engin):
             v_url=li.find_all('a')[-1]['href'].strip()
             links_m3u8.append(v_url) 
             links.append(v_url)       
-    else:
-        return None
     
 
     video['title']=title
@@ -254,40 +252,26 @@ def retrive_video_info(url,engin):
 def get_episode_list(e_url,engin):
         
         video_info=retrive_video_info(e_url,engin)
-        if engin == 'feifan':
-            source=['links','m3u8']
-            index = xbmcgui.Dialog().contextmenu(list=source)
-        elif engin == 'shandian':
-            source=['links','m3u8']
-            index = xbmcgui.Dialog().contextmenu(list=source)
-        elif engin == 'liangzi':
-            source=['links','m3u8']
-            index = xbmcgui.Dialog().contextmenu(list=source)   
-        elif engin == 'tiankong':
-            source=['links','m3u8']
-            index = xbmcgui.Dialog().contextmenu(list=source) 
-        elif engin == 'guangsu':
-            source=['links','m3u8']
-            index = xbmcgui.Dialog().contextmenu(list=source) 
-        elif engin == 'wolong':
-            source=['links','m3u8']
-            index = xbmcgui.Dialog().contextmenu(list=source)   
-        else:
-            return None,None
+
+        source=['links','m3u8']
+        index = xbmcgui.Dialog().contextmenu(list=source)
+
        
         return video_info,index
     
 def get_video_list(url,engin):
         videos = []
+        _next=url
         if engin == 'feifan':
+            prefix='http://ffzy5.tv'
             response=get(url)
             content=BS(response.content,'html.parser')
             v_lists=content.find('ul',class_='videoContent').find_all('li')
             for v_list in v_lists:
-                t_url='http://ffzy5.tv/index.php/vod/detail/id/'+v_list.find('a',class_='address')['href'].strip().split('/')[-1]
+                t_url=prefix+'/index.php/vod/detail/id/'+v_list.find('a',class_='address')['href'].strip().split('/')[-1]
                 videos.append([v_list.find('a',class_='videoName').text.strip(),
                     t_url])
-            _next=content.find('a',title='下一页')['href'].strip()
+            _next=prefix+content.find('a',title='下一页')['href'].strip()
         elif engin == 'wujinvod':
             response=get(url)
             content=BS(response.content,'html.parser')
@@ -348,8 +332,6 @@ def get_video_list(url,engin):
                 _next=prefix+content.find('ol',class_='pagination').find_all('li')[-1].find('a')['href'].strip()
             except:
                 _next=url
-        else:
-            return None,None,None
        
         return videos,_next,engin
 
