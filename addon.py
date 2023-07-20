@@ -116,7 +116,7 @@ def retrive_video_info(url,engin):
         intro=content.find('div',class_='vodplayinfo').text.strip() 
         lists=content.find_all('input',title='sdyun')
         m3u8=content.find_all('input',title='sdm3u8')
-        
+        links_m3u8=[]
         links=[]
         for li in m3u8:
             links_m3u8.append(li['value'].strip())
@@ -279,7 +279,7 @@ def get_video_list(url,engin):
             for v_list in v_lists:
                 t_url='https://www.wjvod.com/voddetail/'+v_list['href'].strip().split('/')[-1]
                 v_info={'title':v_list['title'].strip(),
-                        'thumb':v_list['data-original'].strip(),
+                        'thumb':v_list['data-original'].strip()
                         }
                 videos.append([v_info,t_url])
             _next=content.find('ul',class_='stui-page').find_all('li')[-2].find('a')['href']
@@ -571,7 +571,7 @@ def get_videos(category):
             region=4
             if region == -1:
                 region == 1
-            url = prefix+"index.php/vod/type/id/{}/page/1.html".format(page[region]) # Change this to a valid url that you want to scrape
+            url = prefix+"index.php/vod/type/id/{}/page/1.html".format(region) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "Entertainment":
             #cat=['All--全部','Mainland--大陆综艺','Hongkong--日韩综艺','US-EU--港台综艺','Koren--欧美综艺']
@@ -580,7 +580,7 @@ def get_videos(category):
             region=3
             if region == -1:
                 region == 1
-            url = prefix+"index.php/vod/type/id/{}/page/1.html".format(page[region]) # Change this to a valid url that you want to scrape
+            url = prefix+"index.php/vod/type/id/{}/page/1.html".format(region) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "Search":
             query = get_user_input() # User input via onscreen keyboard
