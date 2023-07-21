@@ -417,16 +417,9 @@ def get_videos(category):
             return get_video_list(url,engines[index])
     elif engines[index] == 'pianku':
         if category == "Movies":
-            
-            cat=['all--全部','action--动作片','Comedy--喜剧片','Romance--爱情片','SciFi--科幻片',
-                 'Horor--恐怖片','Drama--剧情片','War--战争片','Documentary--记录片','Misery--悬疑片',
-                 'Crime--犯罪片','Fantacy--奇幻片','Shaws--邵氏片','advanture--冒险','Child--儿童','animate--动画',
-                'dancing--歌舞','Music--音乐','Thriller--惊悚','dead--丧尸','Biography--传记','Western--西部','disaster==灾难',
-                'old--古装','Wuxia--武侠','family--家庭','shorts--短片','campus--校园','Literature--文艺','sports--运动','Young age--青春',
-                'inspirational--励志','humandity--人性','food--美食','woman--女性','Heal--治愈','history--历史']
             page=[ '','动作','喜剧','爱情','科幻','恐怖','剧情','战争','纪录','悬疑','犯罪','奇幻','冒险','儿童','动画','歌舞','音乐','惊悚',
                  '丧尸','传记','西部','灾难','古装','武侠','家庭','短片','校园','文艺','运动','青春','励志','人性','美食','女性','治愈','历史']
-            genre= xbmcgui.Dialog().contextmenu(list=cat)
+            genre= xbmcgui.Dialog().contextmenu(list=page)
             sorting=['time','hits','score']
             s=xbmcgui.Dialog().contextmenu(list=sorting)
          
@@ -438,15 +431,9 @@ def get_videos(category):
             url = "https://www.pkmkv.com/ms/1-{}-{}-{}-----1---{}.html".format(page[genre],region[r],sorting[s],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "TVshows":
-            cat=['all--全部','action--动作片','Comedy--喜剧片','Romance--爱情片','SciFi--科幻片',
-                 'Horor--恐怖片','Drama--剧情片','War--战争片','Documentary--记录片','Misery--悬疑片',
-                 'Crime--犯罪片','Fantacy--奇幻片','Shaws--邵氏片','advanture--冒险','Child--儿童','animate--动画',
-                'dancing--歌舞','Music--音乐','Thriller--惊悚','dead--丧尸','Biography--传记','Western--西部','disaster==灾难',
-                'old--古装','Wuxia--武侠','family--家庭','shorts--短片','campus--校园','Literature--文艺','sports--运动','Young age--青春',
-                'inspirational--励志','humandity--人性','food--美食','woman--女性','Heal--治愈','history--历史']
             page=[ '','动作','喜剧','爱情','科幻','恐怖','剧情','战争','纪录','悬疑','犯罪','奇幻','冒险','儿童','动画','歌舞','音乐','惊悚',
                  '丧尸','传记','西部','灾难','古装','武侠','家庭','短片','校园','文艺','运动','青春','励志','人性','美食','女性','治愈','历史']
-            genre= xbmcgui.Dialog().contextmenu(list=cat)
+            genre= xbmcgui.Dialog().contextmenu(list=page)
             sorting=['time','hits','score']
             s=xbmcgui.Dialog().contextmenu(list=sorting)
          
