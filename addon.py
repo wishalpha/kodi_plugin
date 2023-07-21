@@ -446,7 +446,7 @@ def get_videos(category):
             return get_video_list(url,engines[index])
         elif category == "Comics":
             page=[ '','剧情','萌系','科幻','日常','战斗','战争','热血','机战','游戏','搞笑','恋爱','后宫','百合','基腐','冒险','儿童','歌舞',
-                  '音乐','奇幻','恐怖','惊悚','犯罪','悬疑','西部','灾难','古装','武侠','泡面','校园','运动','体育','青春','美食','治愈','致郁','励志','历史,'其他']
+                  '音乐','奇幻','恐怖','惊悚','犯罪','悬疑','西部','灾难','古装','武侠','泡面','校园','运动','体育','青春','美食','治愈','致郁','励志','历史','其他']
             genre= xbmcgui.Dialog().contextmenu(list=page)
             sorting=['time','hits','score']
             s=xbmcgui.Dialog().contextmenu(list=sorting)
