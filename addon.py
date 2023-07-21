@@ -77,8 +77,8 @@ def retrive_video_info(url,engin):
         lists=content.find_all('ul',class_='stui-content__playlist')
         links_m3u8=[]
         links=[]
-        for li in lists[0].find_all('li'):
-            v_url=li.find('a')['href'].strip()
+        for li in lists[1].find_all('li'):
+            v_url='https://wjvod.com/'+li.find('a')['href'].strip()
             v_response=get(v_url)
             v_content=BS(v_response.content,'html.parser')
             v_link=v_content.find('div',id='stui-player__video').find('script').text.strip().split('http')[-1].split('m3u8')[0].replace('\\','')
