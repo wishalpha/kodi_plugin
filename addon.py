@@ -81,7 +81,7 @@ def retrive_video_info(url,engin):
             v_url='https://wjvod.com/'+li.find('a')['href'].strip()
             v_response=get(v_url)
             v_content=BS(v_response.content,'html.parser')
-            v_link=v_content.find('div',id='stui-player__video').find('script').text.strip().split('http')[-1].split('m3u8')[0].replace('\\','')
+            v_link=v_content.find('div',class_='stui-player__video').find('script').text.strip().split('http')[-1].split('m3u8')[0].replace('\\','')
             links.append('http'+v_link+'m3u8')
             links_m3u8.append('http'+v_link+'m3u8')      
         #for li in lists[1].find_all('li')[:-1]:
@@ -292,7 +292,10 @@ def get_video_list(url,engin):
                 t_url=prefix+'/index.php/vod/detail/id/'+v_list.find('a',class_='address')['href'].strip().split('/')[-1]
                 videos.append([v_list.find('a',class_='videoName').text.strip(),
                     t_url])
-            _next=prefix+content.find('a',title='下一页')['href'].strip()
+            try:
+                _next=prefix+content.find('a',title='下一页')['href'].strip()
+            except:
+                _next=url
         elif engin == 'wujinvod':
             response=get(url)
             content=BS(response.content,'html.parser')
@@ -303,7 +306,10 @@ def get_video_list(url,engin):
                         'thumb':v_list['data-original'].strip()
                         }
                 videos.append([v_info,t_url])
-            _next=content.find('ul',class_='stui-page').find_all('li')[-2].find('a')['href']
+            try:
+                _next=content.find('ul',class_='stui-page').find_all('li')[-2].find('a')['href']
+            except:
+                _next=url
         elif engin == 'pianku':
             response=get(url)
             content=BS(response.content,'html.parser')
@@ -321,7 +327,10 @@ def get_video_list(url,engin):
                         'score':v_list.find('h3').find('span').text.strip()
                         }
                 videos.append([v_info,t_url])
-            _next=content.find('ul',class_='stui-page').find_all('li')[-2].find('a')['href']
+            try:
+                _next='https://www.pkmkv.com'+content.find('a',class_='a1')['href']
+            except:
+                _next=url
         elif engin == 'shandian':
             response=get(url)
             content=BS(response.content,'html.parser')
@@ -329,7 +338,10 @@ def get_video_list(url,engin):
             for v_list in v_lists:
                 t_url='https://shandianzy.com/index.php/vod/detail/id/'+v_list.find('a')['href'].strip().split('/')[-1]
                 videos.append([v_list.text.strip(),t_url])
-            _next='https://shandianzy.com'+content.find('a',title='下一页')['href'].strip()
+            try:
+                _next='https://shandianzy.com'+content.find('a',title='下一页')['href'].strip()
+            except:
+                _next=url
         elif engin == 'liangzi':
             prefix='http://lzizy.net'
             response=get(url)
@@ -338,7 +350,10 @@ def get_video_list(url,engin):
             for v_list in v_lists:
                 t_url=prefix+'/index.php/vod/detail/id/'+v_list['href'].strip().split('/')[-1]
                 videos.append([v_list.text.strip(),t_url])
-            _next=prefix+content.find('a',title='下一页')['href'].strip()
+            try:
+                _next=prefix+content.find('a',title='下一页')['href'].strip()
+            except:
+                _next=url
         elif engin == 'tiankong':
             prefix='http://tkzy1.com'
             response=get(url)
@@ -347,7 +362,10 @@ def get_video_list(url,engin):
             for v_list in v_lists:
                 t_url=prefix+'/vod/detail/id/'+v_list.find('a')['href'].strip().split('id/')[-1]
                 videos.append([v_list.text.strip(),t_url])
-            _next=prefix+content.find('a',title='下一页')['href'].strip()
+            try:
+                _next=prefix+content.find('a',title='下一页')['href'].strip()
+            except:
+                _next=url
         elif engin == 'guangsu':
             response=get(url)
             content=BS(response.content,'html.parser')
