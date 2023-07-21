@@ -72,7 +72,7 @@ def retrive_video_info(url,engin):
         status=None
         genre=None 
         year=None
-        thumb=content.find('img',class_='lazyload').['data-original'].strip()
+        thumb=content.find('img',class_='lazyload')['data-original'].strip()
         intro=content.find('span',class_='detail-content').text.strip() 
         lists=content.find_all('ul',class_='stui-content__playlist')
         links_m3u8=[]
