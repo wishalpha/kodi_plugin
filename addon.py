@@ -309,7 +309,7 @@ def get_video_list(url,engin):
             content=BS(response.content,'html.parser')
             img_lists=content.find_all('div',class_='li-img')
             v_lists=content.find_all('div',class_='li-bottom')  
-            for img_list,v_list in zip(img_list,v_lists):
+            for img_list,v_list in zip(img_lists,v_lists):
                 t_url='https://www.pkmkv.com/'+img_list.find('a')['href'].strip().split('/')[-1]
                 infos=v_list.find('div',class_='tag').text.strip()
                 v_info={'title':img_list.find('a')['title'].strip(),
