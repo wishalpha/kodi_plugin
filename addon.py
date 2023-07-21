@@ -16,7 +16,7 @@ _url = sys.argv[0]
 _handle = int(sys.argv[1])
 
 CATEGORIES = ["Movies", "TVshows","Comics","Entertainment","Search" ]
-engines =['wujinvod','feifan','shandian','liangzi','tiankong','guangsu','wolong']
+engines =['wujinvod','feifan','shandian','liangzi','tiankong','guangsu','wolong','pianku']
 
 def get_user_input():  
     kb = xbmc.Keyboard('', 'Please enter the video title')
@@ -28,11 +28,8 @@ def get_user_input():
 
 def get_url(**kwargs):
     return '{0}?{1}'.format(_url, urlencode(kwargs))
-
-
 def get_home():
     return CATEGORIES
-
 def retrive_video_info(url,engin):
     video={}
     if engin == 'feifan':
@@ -69,34 +66,58 @@ def retrive_video_info(url,engin):
     elif engin == 'wujinvod':
         response=get(url)
         content=BS(response.content,'html.parser')
-        infos=content.find('div',class_='right').find_all('p')
-        for i, info in enumerate(infos):
-            if i==0:
-                title=info.text.strip().split(' ')[-1]
-            elif i == 3:
-                status=info.text.strip().split(' ')[-1]
-            elif i == 4:
-                genre=info.text.strip().split(' ')[-1]
-            elif i== 7:
-                year = info.text.strip().split(' ')[-1]
-            elif i==8:
-                region=info.text.strip().split(' ')[-1]
-            elif i==9:
-                lang = info.text.strip().split(' ')[-1]
-        thumb=content.find('div',class_='left').find('img')['src'].strip()
-        intro=content.find('div',class_='vod_content').find('p').text.strip() 
-        lists=content.find_all('div',class_='playlist')
-        
+        title=content.find('h1').text.strip()
+        region=None
+        lang = None
+        status=None
+        genre=None 
+        year=None
+        thumb=content.find('img',class_='lazyload').['data-original'].strip()
+        intro=content.find('span',class_='detail-content').text.strip() 
+        lists=content.find_all('ul',class_='stui-content__playlist')
+        links_m3u8=[]
         links=[]
-        for li in lists[0].findChildren('li',recursive=False)[:-1]:
+        for li in lists[0].find_all('li'):
             v_url=li.find('a')['href'].strip()
             v_response=get(v_url)
             v_content=BS(v_response.content,'html.parser')
-            v_link=v_content.find('video',class_='art-video')['src'].strip()
-            links.append(v_link)
+            v_link=v_content.find('div',id='stui-player__video').find('script').text.strip().split('http')[-1].split('m3u8')[0].replace('\\','')
+            links.append('http'+v_link+'m3u8')
+            links_m3u8.append('http'+v_link+'m3u8')      
+        #for li in lists[1].find_all('li')[:-1]:
+            #links_m3u8.append(li.find('a')['href'].strip())
+    elif engin == 'pianku':
+        response=get(url)
+        content=BS(response.content,'html.parser')
+
+        region=None
+        lang = None
+        status=None
+        genre=None        
+        title=content.find('h1').text.strip()
+        year = content.find('h1').find('span').text.strip()        
+        thumb=content.find('div',class_='img').find('img')['src'].strip()
+        intro=content.find('p',class_='sqjj_a').text.strip() 
+
+        source=[]
+        ul=content.find('ul',class_='py-tabs').find_all('li')
+        for li in ul:
+            source.append(li.text.strip())
+        index = xbmcgui.Dialog().contextmenu(list=source)
+        
+        lists=content.find('div',class_='bd').find_all('player')[index]
+        
+        links=[]
         links_m3u8=[]
-        for li in lists[1].find_all('li')[:-1]:
-            links_m3u8.append(li.find('a')['href'].strip())
+        for li in lists.find_all('li')
+            v_url='https://www.pkmkv.com'+li.find('a')['href'].strip()
+            v_response=get(v_url)
+            v_content=BS(v_response.content,'html.parser')
+            v_link=v_content.find('div',id='video').find('script').text.strip().split('http')[-1].split('m3u8')[0].replace('\\','')
+            links.append('http'+v_link+'m3u8')
+            links_m3u8.append('http'+v_link+'m3u8')
+        
+        
     elif engin == 'shandian':
         response=get(url)
         content=BS(response.content,'html.parser')
@@ -277,7 +298,7 @@ def get_video_list(url,engin):
             content=BS(response.content,'html.parser')
             v_lists=content.find_all('a',class_='stui-vodlist__thumb')
             for v_list in v_lists:
-                t_url='https://www.wjvod.com/voddetail/'+v_list['href'].strip().split('/')[-1]
+                t_url='https://www.wjvod.com'+v_list['href'].strip()
                 v_info={'title':v_list['title'].strip(),
                         'thumb':v_list['data-original'].strip()
                         }
@@ -482,7 +503,7 @@ def get_videos(category):
             r=xbmcgui.Dialog().contextmenu(list=region)
             year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011',]
             y=xbmcgui.Dialog().contextmenu(list=year)
-            url = "".format(page[genre],region[r],sorting[s],year[y]) # Change this to a valid url that you want to scrape
+            url = "https://www.wjvod.com/vodshow/{}-{}-{}------1---{}.html".format(page[genre],region[r],sorting[s],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "TVshows":
             cat=['all--全部','Mainland--国产剧','Hongkong--香港剧','Taiwan--台湾剧','Japan--日本剧','Koren--韩国剧','US_EU--欧美剧','World--海外剧']
@@ -755,7 +776,7 @@ def list_videos(category):
             list_item.setArt({'thumb': video[0]['thumb'], 'icon': video[0]['thumb'], 'fanart': video[0]['thumb']})
         elif engin == 'pianku':
             list_item = xbmcgui.ListItem(label=video[0]['title'])
-            list_item.setInfo('video', {'title': video[0]['title'], 'genre': video['genre']})
+            list_item.setInfo('video', {'title': video[0]['title'], 'genre': video[0]['genre'], 'plot': video['intro']})
             list_item.setArt({'thumb': video[0]['thumb'], 'icon': video[0]['thumb'], 'fanart': video[0]['thumb']})
         else :
             list_item = xbmcgui.ListItem(label=video[0])
@@ -775,7 +796,7 @@ def list_videos_next (url,engin):
             list_item.setArt({'thumb': video['thumb'], 'icon': video['thumb'], 'fanart': video['thumb']})
         elif engin == 'pianku':
             list_item = xbmcgui.ListItem(label=video[0]['title'])
-            list_item.setInfo('video', {'title': video[0]['title'], 'genre': video['genre']})
+            list_item.setInfo('video', {'title': video[0]['title'], 'genre': video['genre'], 'plot': video['intro']})
             list_item.setArt({'thumb': video[0]['thumb'], 'icon': video[0]['thumb'], 'fanart': video[0]['thumb']})
         else :
             list_item = xbmcgui.ListItem(label=video[0])
