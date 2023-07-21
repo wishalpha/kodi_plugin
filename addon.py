@@ -283,6 +283,24 @@ def get_video_list(url,engin):
                         }
                 videos.append([v_info,t_url])
             _next=content.find('ul',class_='stui-page').find_all('li')[-2].find('a')['href']
+        elif engin == 'pianku':
+            response=get(url)
+            content=BS(response.content,'html.parser')
+            img_lists=content.find_all('div',class_='li-img')
+            v_lists=content.find_all('div',class_='li-bottom')  
+            for img_list,v_list in zip(img_list,v_lists):
+                t_url='https://www.pkmkv.com/'+img_list.find('a')['href'].strip().split('/')[-1]
+                infos=v_list.find('div',class_='tag').text.strip()
+                v_info={'title':img_list.find('a')['title'].strip(),
+                        'thumb':img_list.find('a').find('img')['src'].strip(),
+                        'genre':infos.split('/')[2],
+                        'year':infos.split('/')[0],
+                        'region':infos.split('/')[1],
+                        'lang':infos.split('/')[3],
+                        'score':v_list.find('h3').find('span').text.strip()
+                        }
+                videos.append([v_info,t_url])
+            _next=content.find('ul',class_='stui-page').find_all('li')[-2].find('a')['href']
         elif engin == 'shandian':
             response=get(url)
             content=BS(response.content,'html.parser')
@@ -443,7 +461,7 @@ def get_videos(category):
             r=xbmcgui.Dialog().contextmenu(list=region)
             year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
             y=xbmcgui.Dialog().contextmenu(list=year)
-            url = "https://www.pkmkv.com/ms/4-{}-{}-{}-----1---{}.html".format(page[genre],region[r],sorting[s],year[y]) # Change this to a valid url that you want to scrape
+            url = "https://www.pkmkv.com/ms/3-{}-{}-{}-----1---{}.html".format(page[genre],region[r],sorting[s],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "Search":
             query = get_user_input() # User input via onscreen keyboard
@@ -733,8 +751,12 @@ def list_videos(category):
         
         if engin == 'wujinvod':
             list_item = xbmcgui.ListItem(label=video[0]['title'])
-            list_item.setInfo('video', {'title': video['title']})
-            list_item.setArt({'thumb': video['thumb'], 'icon': video['thumb'], 'fanart': video['thumb']})
+            list_item.setInfo('video', {'title': video[0]['title'] })
+            list_item.setArt({'thumb': video[0]['thumb'], 'icon': video[0]['thumb'], 'fanart': video[0]['thumb']})
+        elif engin == 'pianku':
+            list_item = xbmcgui.ListItem(label=video[0]['title'])
+            list_item.setInfo('video', {'title': video[0]['title'], 'genre': video['genre']})
+            list_item.setArt({'thumb': video[0]['thumb'], 'icon': video[0]['thumb'], 'fanart': video[0]['thumb']})
         else :
             list_item = xbmcgui.ListItem(label=video[0])
         url = get_url(action='listing', eposide=video[1],engin=engin)
@@ -751,6 +773,10 @@ def list_videos_next (url,engin):
             list_item = xbmcgui.ListItem(label=video[0]['title'])
             list_item.setInfo('video', {'title': video['title']})
             list_item.setArt({'thumb': video['thumb'], 'icon': video['thumb'], 'fanart': video['thumb']})
+        elif engin == 'pianku':
+            list_item = xbmcgui.ListItem(label=video[0]['title'])
+            list_item.setInfo('video', {'title': video[0]['title'], 'genre': video['genre']})
+            list_item.setArt({'thumb': video[0]['thumb'], 'icon': video[0]['thumb'], 'fanart': video[0]['thumb']})
         else :
             list_item = xbmcgui.ListItem(label=video[0])
         url = get_url(action='listing', eposide=video[1],engin=engin)
