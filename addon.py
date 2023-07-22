@@ -82,6 +82,7 @@ def retrive_video_info(url,engin):
             xbmc.log('check the url '+v_url)
             v_response=get(v_url)
             v_content=BS(v_response.content,'html.parser')
+            xbmc.log('check the url '+str(v_content.find('div',class_='stui-player__video')))
             v_link=v_content.find('div',class_='stui-player__video').find('script').text.strip().split('http')[-1].split('index.m3u8')[0].replace('\\','')
             xbmc.log('get the url '+v_link)
             links.append('http'+v_link+'index.m3u8')
@@ -784,7 +785,8 @@ def list_videos(category):
             list_item.setArt({'thumb': video[0]['thumb'], 'icon': video[0]['thumb'], 'fanart': video[0]['thumb']})
         elif engin == 'pianku':
             list_item = xbmcgui.ListItem(label=video[0]['title'])
-            list_item.setInfo('video', {'title': video[0]['title'], 'genre': video[0]['genre'], 'plot': video[0]['intro']})
+            list_item.setInfo('video', {'title': video[0]['title'], 'genre': video[0]['genre'], 'country': video[0]['region'],
+                                       'year': int(video[0]['year']),'rating': float(video[0]['score'])})
             list_item.setArt({'thumb': video[0]['thumb'], 'icon': video[0]['thumb'], 'fanart': video[0]['thumb']})
         else :
             list_item = xbmcgui.ListItem(label=video[0])
@@ -804,7 +806,8 @@ def list_videos_next (url,engin):
             list_item.setArt({'thumb': video['thumb'], 'icon': video['thumb'], 'fanart': video['thumb']})
         elif engin == 'pianku':
             list_item = xbmcgui.ListItem(label=video[0]['title'])
-            list_item.setInfo('video', {'title': video[0]['title'], 'genre': video[0]['genre'], 'plot': video[0]['intro']})
+            list_item.setInfo('video', {'title': video[0]['title'], 'genre': video[0]['genre'], 'country': video[0]['region'],
+                                       'year': int(video[0]['year']),'rating': float(video[0]['score'])})
             list_item.setArt({'thumb': video[0]['thumb'], 'icon': video[0]['thumb'], 'fanart': video[0]['thumb']})
         else :
             list_item = xbmcgui.ListItem(label=video[0])
