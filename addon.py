@@ -118,7 +118,8 @@ def retrive_video_info(url,engin):
             v_url='https://www.pkmkv.com'+li.find('a')['href'].strip()
             v_response=get(v_url)
             v_content=BS(v_response.content,'html.parser')
-            v_link=v_content.find('div',id='video').find('script').text.strip().split('http')[-1].split('m3u8')[0].replace('\\','')
+            v_link=v_content.find('div',class_='stui-player__video').find('script').string
+            v_link=''.join(v_link).split('http')[-1].split('index.m3u8')[0].replace('\\','')
             links.append('http'+v_link+'m3u8')
             links_m3u8.append('http'+v_link+'m3u8')
         
