@@ -16,7 +16,7 @@ _url = sys.argv[0]
 _handle = int(sys.argv[1])
 
 CATEGORIES = ["Movies", "TVshows","Comics","Entertainment","Search" ]
-engines =['wujinvod','feifan','shandian','liangzi','tiankong','guangsu','wolong','pianku']
+engines =['wujinvod','pianku','feifan','shandian','liangzi','tiankong','guangsu','wolong']
 
 def get_user_input():  
     kb = xbmc.Keyboard('', 'Please enter the video title')
@@ -79,9 +79,11 @@ def retrive_video_info(url,engin):
         links=[]
         for li in lists[1].find_all('li'):
             v_url='https://wjvod.com'+li.find('a')['href'].strip()
+            xmbc.log('check the url '+v_url)
             v_response=get(v_url)
             v_content=BS(v_response.content,'html.parser')
             v_link=v_content.find('div',class_='stui-player__video').find('script').text.strip().split('http')[-1].split('index.m3u8')[0].replace('\\','')
+            xmbc.log('get the url '+v_link)
             links.append('http'+v_link+'index.m3u8')
             links_m3u8.append('http'+v_link+'index.m3u8')      
         #for li in lists[1].find_all('li')[:-1]:
