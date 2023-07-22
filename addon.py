@@ -79,13 +79,13 @@ def retrive_video_info(url,engin):
         links=[]
         for li in lists[1].find_all('li'):
             v_url='https://wjvod.com'+li.find('a')['href'].strip()
-            xbmc.log('check the url '+v_url)
+            #xbmc.log('check the url '+v_url)
             v_response=get(v_url)
             v_content=BS(v_response.content,'html.parser')
             #v_link=v_content.find('div',class_='stui-player__video').find('script').text.strip().split('http')[-1].split('index.m3u8')[0].replace('\\','')
             v_link=v_content.find('div',class_='stui-player__video').find('script').string
             v_link=''.join(v_link).split('http')[-1].split('index.m3u8')[0].replace('\\','')
-            xbmc.log('get the url '+v_link)
+            #xbmc.log('get the url '+v_link)
             links.append('http'+v_link+'index.m3u8')
             links_m3u8.append('http'+v_link+'index.m3u8')      
         #for li in lists[1].find_all('li')[:-1]:
@@ -93,13 +93,13 @@ def retrive_video_info(url,engin):
     elif engin == 'pianku':
         response=get(url)
         content=BS(response.content,'html.parser')
-        xbmc.log('***************'+url)
-        xbmc.log(str(content))
+        #xbmc.log('***************'+url)
+        #xbmc.log(str(content))
         region=None
         lang = None
         status=None
         genre=None   
-        year=None
+        year=content.find('span',class_='year').text.strip()
         title=content.find('h1').text.strip()
         thumb=content.find('div',class_='img').find('img')['src'].strip()
         intro=content.find('p',class_='sqjj_a').text.strip() 
@@ -317,12 +317,12 @@ def get_video_list(url,engin):
                 _next=url
         elif engin == 'pianku':
             response=get(url)
-            xbmc.log('check url '+url)
+            #xbmc.log('check url '+url)
             content=BS(response.content,'html.parser')
             img_lists=content.find_all('div',class_='li-img')
             v_lists=content.find_all('div',class_='li-bottom')  
             for img_list,v_list in zip(img_lists,v_lists):
-                t_url='https://www.pkmkv.com/'+img_list.find('a')['href'].strip().split('/')[-1]
+                t_url='https://www.pkmkv.com'+img_list.find('a')['href'].strip()
                 infos=v_list.find('div',class_='tag').text.strip()
                 v_info={'title':img_list.find('a')['title'].strip(),
                         'thumb':img_list.find('a').find('img')['src'].strip(),
