@@ -93,15 +93,14 @@ def retrive_video_info(url,engin):
     elif engin == 'pianku':
         response=get(url)
         content=BS(response.content,'html.parser')
-
+        xbmc.log('***************'+url)
+        xbmc.log(str(content))
         region=None
         lang = None
         status=None
         genre=None   
         year=None
         title=content.find('h1').text.strip()
-        
-
         thumb=content.find('div',class_='img').find('img')['src'].strip()
         intro=content.find('p',class_='sqjj_a').text.strip() 
 
