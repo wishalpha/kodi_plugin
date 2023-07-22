@@ -82,11 +82,6 @@ def retrive_video_info(url,engin):
             xbmc.log('check the url '+v_url)
             v_response=get(v_url)
             v_content=BS(v_response.content,'html.parser')
-            xbmc.log('check the url '+str(v_content.find('div',class_='stui-player__video')))
-            xbmc.log('check the url '+str(v_content.find('div',class_='stui-player__video').find('script')))
-            xbmc.log('check the url '+str(v_content.find('div',class_='stui-player__video').find('script').strings))
-            xbmc.log('check the url '+str(v_content.find('div',class_='stui-player__video').find('script').text.strip().split('http')[-1].split('index.m3u8')[0]))
-            xbmc.log('check the url '+str(v_content.find('div',class_='stui-player__video').find('script').text.strip().split('http')[-1].split('index.m3u8')[0].replace('\\','')))
             #v_link=v_content.find('div',class_='stui-player__video').find('script').text.strip().split('http')[-1].split('index.m3u8')[0].replace('\\','')
             v_link=v_content.find('div',class_='stui-player__video').find('script').string
             v_link=''.join(v_link).split('http')[-1].split('index.m3u8')[0].replace('\\','')
@@ -102,14 +97,10 @@ def retrive_video_info(url,engin):
         region=None
         lang = None
         status=None
-        genre=None        
+        genre=None   
+        year=None
         title=content.find('h1').text.strip()
         
-
-        xbmc.log(str(content.find('span',class_='year')))
-        #year = content.find('span',class_='year').text.strip()[1:-1] 
-        year = content.find('span',class_='year').string
-        year = ''.join(year)[1:-1]
 
         thumb=content.find('div',class_='img').find('img')['src'].strip()
         intro=content.find('p',class_='sqjj_a').text.strip() 
@@ -506,10 +497,18 @@ def get_videos(category):
             url = "https://www.pkmkv.com/ms/3-{}-{}-{}-----1---{}.html".format(region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "Search":
-            query = get_user_input() # User input via onscreen keyboard
-            if not query:
-                return get_videos(category) # Return empty list if query is blank
-            url = "https://www.wjvod.com/vodsearch/{}----------1---.html".format(quote(query)) # Change this to a valid url for search results that you want to scrape
+            page=[ '','动作','喜剧','爱情','科幻','恐怖','剧情','战争','纪录','悬疑','犯罪','奇幻','冒险','儿童','动画','歌舞','音乐','惊悚',
+                 '丧尸','传记','西部','灾难','古装','武侠','家庭','短片','校园','文艺','运动','青春','励志','人性','美食','女性','治愈','历史']
+            genre= xbmcgui.Dialog().contextmenu(list=['全部']+page[1:])
+            sorting=['time','hits','score']
+            s=xbmcgui.Dialog().contextmenu(list=sorting)
+         
+            region=['','大陆','香港','台湾','美国','法国','英国','日本','韩国','德国','泰国','法国','印度','丹麦','瑞典','荷兰','加拿大',
+                    '俄罗斯','丹麦意大利','比利时','西班牙','澳大利亚','其他']
+            r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
+            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
+            y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
+            url = "https://www.pkmkv.com/ms/1-{}-{}-{}-----1---{}.html".format(region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
     elif engines[index] == 'wujinvod':
         if category == "Movies":
@@ -521,9 +520,9 @@ def get_videos(category):
             sorting=['time','hits','score']
             s=xbmcgui.Dialog().contextmenu(list=sorting)
             region=['','中国大陆','中国香港','中国台湾','美国','法国','英国','日本','韩国','德国','泰国','印度','其他']
-            r=xbmcgui.Dialog().contextmenu(list=region)
+            r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
             year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011',]
-            y=xbmcgui.Dialog().contextmenu(list=year)
+            y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = "https://www.wjvod.com/vodshow/{}-{}-{}------1---{}.html".format(page[genre],region[r],sorting[s],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "TVshows":
@@ -798,7 +797,7 @@ def list_videos(category):
         elif engin == 'pianku':
             list_item = xbmcgui.ListItem(label=video[0]['title'])
             list_item.setInfo('video', {'title': video[0]['title'], 'genre': video[0]['genre'], 'country': video[0]['region'],
-                                       'year': int(video[0]['year']),'rating': float(video[0]['score'])})
+                                       'rating': float(video[0]['score'])})
             list_item.setArt({'thumb': video[0]['thumb'], 'icon': video[0]['thumb'], 'fanart': video[0]['thumb']})
         else :
             list_item = xbmcgui.ListItem(label=video[0])
@@ -819,7 +818,7 @@ def list_videos_next (url,engin):
         elif engin == 'pianku':
             list_item = xbmcgui.ListItem(label=video[0]['title'])
             list_item.setInfo('video', {'title': video[0]['title'], 'genre': video[0]['genre'], 'country': video[0]['region'],
-                                       'year': int(video[0]['year']),'rating': float(video[0]['score'])})
+                                       'rating': float(video[0]['score'])})
             list_item.setArt({'thumb': video[0]['thumb'], 'icon': video[0]['thumb'], 'fanart': video[0]['thumb']})
         else :
             list_item = xbmcgui.ListItem(label=video[0])
