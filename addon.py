@@ -83,6 +83,10 @@ def retrive_video_info(url,engin):
             v_response=get(v_url)
             v_content=BS(v_response.content,'html.parser')
             xbmc.log('check the url '+str(v_content.find('div',class_='stui-player__video')))
+            xbmc.log('check the url '+str(v_content.find('div',class_='stui-player__video').find('script')))
+            xbmc.log('check the url '+str(v_content.find('div',class_='stui-player__video').find('script').text.strip()))
+            xbmc.log('check the url '+str(v_content.find('div',class_='stui-player__video').find('script').text.strip().split('http')[-1].split('index.m3u8')[0]))
+            xbmc.log('check the url '+str(v_content.find('div',class_='stui-player__video').find('script').text.strip().split('http')[-1].split('index.m3u8')[0].replace('\\','')))
             v_link=v_content.find('div',class_='stui-player__video').find('script').text.strip().split('http')[-1].split('index.m3u8')[0].replace('\\','')
             xbmc.log('get the url '+v_link)
             links.append('http'+v_link+'index.m3u8')
@@ -98,7 +102,7 @@ def retrive_video_info(url,engin):
         status=None
         genre=None        
         title=content.find('h1').text.strip()
-        year = content.find('h1').find('span').text.strip()        
+        year = content.find('span',class_='year').text.strip()[1:-1]        
         thumb=content.find('div',class_='img').find('img')['src'].strip()
         intro=content.find('p',class_='sqjj_a').text.strip() 
 
