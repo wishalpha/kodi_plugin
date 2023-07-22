@@ -79,11 +79,11 @@ def retrive_video_info(url,engin):
         links=[]
         for li in lists[1].find_all('li'):
             v_url='https://wjvod.com'+li.find('a')['href'].strip()
-            xmbc.log('check the url '+v_url)
+            xbmc.log('check the url '+v_url)
             v_response=get(v_url)
             v_content=BS(v_response.content,'html.parser')
             v_link=v_content.find('div',class_='stui-player__video').find('script').text.strip().split('http')[-1].split('index.m3u8')[0].replace('\\','')
-            xmbc.log('get the url '+v_link)
+            xbmc.log('get the url '+v_link)
             links.append('http'+v_link+'index.m3u8')
             links_m3u8.append('http'+v_link+'index.m3u8')      
         #for li in lists[1].find_all('li')[:-1]:
@@ -314,9 +314,12 @@ def get_video_list(url,engin):
                 _next=url
         elif engin == 'pianku':
             response=get(url)
+            xbmc.log('check url '+url)
             content=BS(response.content,'html.parser')
             img_lists=content.find_all('div',class_='li-img')
+            xbmc.log(img_lists)
             v_lists=content.find_all('div',class_='li-bottom')  
+            xbmc.log(v_lists)
             for img_list,v_list in zip(img_lists,v_lists):
                 t_url='https://www.pkmkv.com/'+img_list.find('a')['href'].strip().split('/')[-1]
                 infos=v_list.find('div',class_='tag').text.strip()
@@ -439,57 +442,57 @@ def get_videos(category):
         if category == "Movies":
             page=[ '','动作','喜剧','爱情','科幻','恐怖','剧情','战争','纪录','悬疑','犯罪','奇幻','冒险','儿童','动画','歌舞','音乐','惊悚',
                  '丧尸','传记','西部','灾难','古装','武侠','家庭','短片','校园','文艺','运动','青春','励志','人性','美食','女性','治愈','历史']
-            genre= xbmcgui.Dialog().contextmenu(list=page)
+            genre= xbmcgui.Dialog().contextmenu(list=['全部']+page[1:])
             sorting=['time','hits','score']
             s=xbmcgui.Dialog().contextmenu(list=sorting)
          
             region=['','大陆','香港','台湾','美国','法国','英国','日本','韩国','德国','泰国','法国','印度','丹麦','瑞典','荷兰','加拿大',
                     '俄罗斯','丹麦意大利','比利时','西班牙','澳大利亚','其他']
-            r=xbmcgui.Dialog().contextmenu(list=region)
+            r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
             year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
-            y=xbmcgui.Dialog().contextmenu(list=year)
-            url = "https://www.pkmkv.com/ms/1-{}-{}-{}-----1---{}.html".format(page[genre],region[r],sorting[s],year[y]) # Change this to a valid url that you want to scrape
+            y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
+            url = "https://www.pkmkv.com/ms/1-{}-{}-{}-----1---{}.html".format(region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "TVshows":
             page=[ '','动作','喜剧','爱情','科幻','恐怖','剧情','战争','纪录','悬疑','犯罪','奇幻','冒险','儿童','动画','歌舞','音乐','惊悚',
                  '丧尸','传记','西部','灾难','古装','武侠','家庭','短片','校园','文艺','运动','青春','励志','人性','美食','女性','治愈','历史']
-            genre= xbmcgui.Dialog().contextmenu(list=page)
+            genre= xbmcgui.Dialog().contextmenu(list=['全部']+page[1:])
             sorting=['time','hits','score']
             s=xbmcgui.Dialog().contextmenu(list=sorting)
          
             region=['','大陆','香港','台湾','美国','法国','英国','日本','韩国','德国','泰国','法国','印度','丹麦','瑞典','荷兰','加拿大',
                     '俄罗斯','丹麦意大利','比利时','西班牙','澳大利亚','其他']
-            r=xbmcgui.Dialog().contextmenu(list=region)
+            r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
             year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
-            y=xbmcgui.Dialog().contextmenu(list=year)
-            url = "https://www.pkmkv.com/ms/2-{}-{}-{}-----1---{}.html".format(page[genre],region[r],sorting[s],year[y]) # Change this to a valid url that you want to scrape
+            y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
+            url = "https://www.pkmkv.com/ms/2-{}-{}-{}-----1---{}.html".format(region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "Comics":
             page=[ '','剧情','萌系','科幻','日常','战斗','战争','热血','机战','游戏','搞笑','恋爱','后宫','百合','基腐','冒险','儿童','歌舞',
                   '音乐','奇幻','恐怖','惊悚','犯罪','悬疑','西部','灾难','古装','武侠','泡面','校园','运动','体育','青春','美食','治愈','致郁','励志','历史','其他']
-            genre= xbmcgui.Dialog().contextmenu(list=page)
+            genre= xbmcgui.Dialog().contextmenu(list=['全部']+page[1:])
             sorting=['time','hits','score']
             s=xbmcgui.Dialog().contextmenu(list=sorting)
          
             region=['','大陆','香港','台湾','美国','法国','英国','日本','韩国','德国','泰国','法国','印度','丹麦','瑞典','荷兰','加拿大',
                     '俄罗斯','丹麦意大利','比利时','西班牙','澳大利亚','其他']
-            r=xbmcgui.Dialog().contextmenu(list=region)
+            r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
             year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
-            y=xbmcgui.Dialog().contextmenu(list=year)
-            url = "https://www.pkmkv.com/ms/4-{}-{}-{}-----1---{}.html".format(page[genre],region[r],sorting[s],year[y]) # Change this to a valid url that you want to scrape
+            y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
+            url = "https://www.pkmkv.com/ms/4-{}-{}-{}-----1---{}.html".format(region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "Entertainment":
             page=[ '','真人秀','脱口秀','选秀','情感','喜剧','访谈','播报','旅游','音乐','美食','纪实','曲艺','生活','游戏','财经','求职','体育','MV纪录']
-            genre= xbmcgui.Dialog().contextmenu(list=page)
+            genre= xbmcgui.Dialog().contextmenu(list=['全部']+page[1:])
             sorting=['time','hits','score']
             s=xbmcgui.Dialog().contextmenu(list=sorting)
          
             region=['','大陆','香港','台湾','美国','法国','英国','日本','韩国','德国','泰国','法国','印度','丹麦','瑞典','荷兰','加拿大',
                     '俄罗斯','丹麦意大利','比利时','西班牙','澳大利亚','其他']
-            r=xbmcgui.Dialog().contextmenu(list=region)
+            r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
             year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
             y=xbmcgui.Dialog().contextmenu(list=year)
-            url = "https://www.pkmkv.com/ms/3-{}-{}-{}-----1---{}.html".format(page[genre],region[r],sorting[s],year[y]) # Change this to a valid url that you want to scrape
+            url = "https://www.pkmkv.com/ms/3-{}-{}-{}-----1---{}.html".format(region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "Search":
             query = get_user_input() # User input via onscreen keyboard
