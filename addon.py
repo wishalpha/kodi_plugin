@@ -120,8 +120,8 @@ def retrive_video_info(url,engin):
             v_content=BS(v_response.content,'html.parser')
             v_link=v_content.find('div',id='video').find('script').string
             v_link=''.join(v_link).split('http')[-1].split('index.m3u8')[0].replace('\\','')
-            links.append('http'+v_link+'m3u8')
-            links_m3u8.append('http'+v_link+'m3u8')
+            links.append('http'+v_link+'index.m3u8')
+            links_m3u8.append('http'+v_link+'index.m3u8')
         
         
     elif engin == 'shandian':
