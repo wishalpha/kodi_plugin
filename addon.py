@@ -110,7 +110,7 @@ def retrive_video_info(url,engin):
             source.append(li.text.strip())
         index = xbmcgui.Dialog().contextmenu(list=source)
         
-        lists=content.find('div',class_='bd').find_all('player')[index]
+        lists=content.find('div',class_='bd').find_all('ul',class_='player')[index]
         
         links=[]
         links_m3u8=[]
