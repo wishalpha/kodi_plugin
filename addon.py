@@ -1,8 +1,8 @@
 # coding: utf-8
 import sys
-from urllib import urlencode
-from urllib import quote
-from urlparse import parse_qsl
+from urllib.parse import urlencode
+from urllib.parse import quote
+from uurllib.parse import parse_qsl
 
 from bs4 import BeautifulSoup as BS
 from requests import get
