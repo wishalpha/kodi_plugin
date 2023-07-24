@@ -2,7 +2,7 @@
 import sys
 from urllib.parse import urlencode
 from urllib.parse import quote
-from uurllib.parse import parse_qsl
+from urllib.parse import parse_qsl
 
 from bs4 import BeautifulSoup as BS
 from requests import get
