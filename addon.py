@@ -303,6 +303,7 @@ def get_video_list(url,engin):
             except:
                 _next=url
         elif engin == 'wujinvod':
+            prefix='https://wjvod.com'
             response=get(url)
             content=BS(response.content,'html.parser')
             v_lists=content.find_all('a',class_='stui-vodlist__thumb')
@@ -313,7 +314,7 @@ def get_video_list(url,engin):
                         }
                 videos.append([v_info,t_url])
             try:
-                _next=content.find('ul',class_='stui-page').find_all('li')[-2].find('a')['href']
+                _next=prefix+content.find('ul',class_='stui-page').find_all('li')[-2].find('a')['href'].strip()
             except:
                 _next=url
         elif engin == 'pianku':
@@ -335,7 +336,7 @@ def get_video_list(url,engin):
                         }
                 videos.append([v_info,t_url])
             try:
-                _next='https://www.pkmkv.com'+content.find('a',class_='a1')['href']
+                _next='https://www.pkmkv.com'+content.find('a',class_='a1')['href'].strip()
             except:
                 _next=url
         elif engin == 'shandian':
