@@ -523,7 +523,7 @@ def get_videos(category):
             s=xbmcgui.Dialog().contextmenu(list=sorting)
             region=['','中国大陆','中国香港','中国台湾','美国','法国','英国','日本','韩国','德国','泰国','印度','其他']
             r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011',]
+            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = "https://www.wjvod.com/vodshow/{}-{}-{}------1---{}.html".format(page[genre],region[r],sorting[s],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
