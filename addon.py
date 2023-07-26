@@ -77,7 +77,7 @@ def retrive_video_info(url,engin):
         lists=content.find_all('ul',class_='stui-content__playlist')
         links_m3u8=[]
         links=[]
-        for li in lists[1].find_all('li'):
+        for li in lists[-1].find_all('li'):
             v_url='https://wjvod.com'+li.find('a')['href'].strip()
             #xbmc.log('check the url '+v_url)
             v_response=get(v_url)
@@ -522,7 +522,7 @@ def get_videos(category):
             s=xbmcgui.Dialog().contextmenu(list=sorting)
             region=['','中国大陆','中国香港','中国台湾','美国','法国','英国','日本','韩国','德国','泰国','印度','其他']
             r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011',]
+            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = "https://www.wjvod.com/vodshow/{}-{}-{}------1---{}.html".format(page[genre],region[r],sorting[s],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
@@ -532,9 +532,11 @@ def get_videos(category):
             region= xbmcgui.Dialog().contextmenu(list=cat)
             cat2=['time','hits','score']
             sorting=xbmcgui.Dialog().contextmenu(list=cat2)
+            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011']
+            y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             if region == -1:
                 region == -2
-            url = "https://www.wjvod.com/vodshow/{}--{}------1---.html".format(page[region],cat2[sorting]) # Change this to a valid url that you want to scrape
+            url = "https://www.wjvod.com/vodshow/{}--{}------1---{}.html".format(page[region],cat2[sorting],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "Comics":
             cat=['all--全部','Mainland--国产动漫','JP_KR--日韩动漫','US_EU--欧美动漫','Animation--动漫电影']
@@ -542,9 +544,11 @@ def get_videos(category):
             region= xbmcgui.Dialog().contextmenu(list=cat)
             cat2=['time','hits','score']
             sorting=xbmcgui.Dialog().contextmenu(list=cat2)
+            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011',]
+            y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             if region == -1:
                 region == -2
-            url = "https://www.wjvod.com/vodshow/{}--{}------1---.html".format(page[region],cat2[sorting]) # Change this to a valid url that you want to scrape
+            url = "https://www.wjvod.com/vodshow/{}--{}------1---{}.html".format(page[region],cat2[sorting],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "Entertainment":
             cat=['all--全部','Mainland--大陆综艺','HK_TW--港台综艺','JP_KR--日韩综艺','US_EU--欧美综艺']
@@ -552,9 +556,11 @@ def get_videos(category):
             region= xbmcgui.Dialog().contextmenu(list=cat)
             cat2=['time','hits','score']
             sorting=xbmcgui.Dialog().contextmenu(list=cat2)
+            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011']
+            y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             if region == -1:
                 region == -2
-            url = "https://www.wjvod.com/vodshow/{}--{}------1---.html".format(page[region],cat2[sorting]) # Change this to a valid url that you want to scrape
+            url = "https://www.wjvod.com/vodshow/{}--{}------1---{}.html".format(page[region],cat2[sorting],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "Search":
             query = get_user_input() # User input via onscreen keyboard
