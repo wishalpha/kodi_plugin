@@ -93,6 +93,35 @@ def retrive_video_info(url,engin):
             links_m3u8.append('http'+v_link+'index.m3u8')      
         #for li in lists[1].find_all('li')[:-1]:
             #links_m3u8.append(li.find('a')['href'].strip())
+    elif engin == 'pianku':
+        prefix='https://www.pian-ku.com'
+        response=get(url)
+        content=BS(response.content,'html.parser')
+        title=content.find('a',class_='vodlist_thumb')['title'].strip()
+        region=None
+        lang = None
+        status=None
+        genre=None 
+        year=None
+        thumb=prefix+content.find('a',class_='vodlist_thumb')['data-original'].strip()
+        intro=content.find('div',class_='full_text').find('span').text.strip() 
+        lists=content.find_all('ul',class_='content_playlist')
+        y=xbmcgui.Dialog().contextmenu(list=['source: 'str(x+1) for x in range(len(lists))])
+        links_m3u8=[]
+        links=[]
+        for li in lists[y].find_all('li'):
+            v_url=prefix+li.find('a')['href'].strip()
+            #xbmc.log('check the url '+v_url)
+            v_response=get(v_url)
+            v_content=BS(v_response.content,'html.parser')
+            #v_link=v_content.find('div',class_='stui-player__video').find('script').text.strip().split('http')[-1].split('index.m3u8')[0].replace('\\','')
+            v_link=v_content.find('div',class_='player_video').find('script').string
+            v_link=''.join(v_link).split('http')[-1].split('index.m3u8')[0].replace('\\','')
+            #xbmc.log('get the url '+v_link)
+            links.append('http'+v_link+'index.m3u8')
+            links_m3u8.append('http'+v_link+'index.m3u8')      
+        #for li in lists[1].find_all('li')[:-1]:
+            #links_m3u8.append(li.find('a')['href'].strip())
     elif engin == 'pkmkv':
         response=get(url)
         content=BS(response.content,'html.parser')
@@ -340,6 +369,24 @@ def get_video_list(url,engin):
                 videos.append([v_info,t_url])
             try:
                 _next='https://www.pkmkv.com'+content.find('a',class_='a1')['href'].strip()
+            except:
+                _next=url
+        elif engin == 'pianku':
+            prefix='https://www.pian-ku.com'
+            response=get(url)
+            #xbmc.log('check url '+url)
+            content=BS(response.content,'html.parser')
+            
+            v_lists=content.find_all('a',class_='vodlist_thumb')  
+            for v_list in v_lists:
+                t_url=prefix+v_list['href'].strip()
+                #infos=v_list.find('div',class_='tag').text.strip()
+                v_info={'title':v_list['title'].strip(),
+                        'thumb':prefix+v_list['data-original'].strip()
+                        }
+                videos.append([v_info,t_url])
+            try:
+                _next=prefix+content.find('ul',class_='page').find_all('li')[-2].find('a')['href'].strip()
             except:
                 _next=url
         elif engin == 'shandian':
