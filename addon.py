@@ -4,7 +4,7 @@ try:
     from urllib import urlencode
     from urllib import quote
     from urlparse import parse_qsl
-except:
+except ImportError:
     from urllib.parse import urlencode,quote,parse_qsl
 
 from bs4 import BeautifulSoup as BS
@@ -452,15 +452,17 @@ def get_video_list(url,engin):
         return videos,_next,engin
 
 def get_videos(category):
+
     index = xbmcgui.Dialog().contextmenu(list=engines)
     if index == -1:
         index=0
     if engines[index] == 'feifan':
+        prefix='http://ffzy1.tv'
         if category == "Movies":
             cat=['All--全部','action--动作片','Comedy--喜剧片','SciFi--科幻片','Horor--恐怖片','Romance--爱情片','Drama--剧情片','War--战争片','Documentary--记录片']
             page=[1,6,7,9,10,8,11,12,20]
             genre= xbmcgui.Dialog().contextmenu(list=cat)
-            url = "http://ffzy1.tv/index.php/vod/type/id/{}/page/1.html".format(page[genre]) # Change this to a valid url that you want to scrape
+            url = prefix+"/index.php/vod/type/id/{}/page/1.html".format(page[genre]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "TVshows":
             cat=['All--全部','Mainland--国产剧','US-EU--欧美剧','Hongkong--香港剧','Koren--韩国片','Taiwan--台湾片','Japan--日本片','World--海外片','Tailand--泰国片']
@@ -468,7 +470,7 @@ def get_videos(category):
             region= xbmcgui.Dialog().contextmenu(list=cat)
             if region == -1:
                 region == 1
-            url = "http://ffzy1.tv/index.php/vod/type/id/{}/page/1.html".format(page[region]) # Change this to a valid url that you want to scrape
+            url = prefix+"/index.php/vod/type/id/{}/page/1.html".format(page[region]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "Comics":
             cat=['All--全部','Mainland--国产动漫','JP_KR--日韩动漫','US_EU--欧美动漫','HK_TW--港台动漫','World--海外动漫']
@@ -476,7 +478,7 @@ def get_videos(category):
             region= xbmcgui.Dialog().contextmenu(list=cat)
             if region == -1:
                 region == 1
-            url = "http://ffzy1.tv/index.php/vod/type/id/{}/page/1.html".format(page[region]) # Change this to a valid url that you want to scrape
+            url = prefix+"/index.php/vod/type/id/{}/page/1.html".format(page[region]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "Entertainment":
             cat=['All--全部','Mainland--大陆综艺','US-EU--港台综艺','Hongkong--日韩综艺','Koren--欧美综艺']
@@ -484,14 +486,53 @@ def get_videos(category):
             region= xbmcgui.Dialog().contextmenu(list=cat)
             if region == -1:
                 region == 1
-            url = "http://ffzy1.tv/index.php/vod/type/id/{}/page/1.html".format(page[region]) # Change this to a valid url that you want to scrape
+            url = prefix+"/index.php/vod/type/id/{}/page/1.html".format(page[region]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "Search":
             query = get_user_input() # User input via onscreen keyboard
             if not query:
                 return get_videos(category) # Return empty list if query is blank
-            url = "http://ffzy1.tv/index.php/vod/search/page/1/wd/{}.html".format(quote(query)) # Change this to a valid url for search results that you want to scrape
+            url = prefix+"/index.php/vod/search/page/1/wd/{}.html".format(quote(query)) # Change this to a valid url for search results that you want to scrape
             return get_video_list(url,engines[index])
+    if engines[index] == 'taopian':
+        prefix='https://www.taopianzy.com/'
+        if category == "Movies":
+            cat=['全部','战争片','奇幻片','科幻片','剧情片','惊悚片','恐怖片','爱情片','动作片','喜剧片','动画片','冒险片','悬疑片','纪录片']
+            cat_id=['',235,233,234,222,223,226,227,228,229,230,231,128,18]
+            cid= xbmcgui.Dialog().contextmenu(list=cat)
+            area=['全部','中国','香港','台湾','美国','英国','法国','日本','韩国','泰国','印度','其它']
+            area_id=['',110,111,112,113,114,115,116,117,118,119,109]
+            aid= xbmcgui.Dialog().contextmenu(list=area)
+            url = prefix+"/vod/list.html?type_id=1&cate_id={}&year_id=&area_id={}".format(str(cat_id[cid]),str(area_id[aid])) # Change this to a valid url that you want to scrape
+            return get_video_list(url,engines[index])
+        elif category == "TVshows":
+            cat=['all','欧美剧','海外剧','国产剧','香港剧','日本剧','韩国剧','泰国剧','台湾剧']
+            cat_id=['',232,237,238,239,240,241,246,249]
+            cid= xbmcgui.Dialog().contextmenu(list=cat)
+            url = prefix+"/vod/list.html?type_id=20&cate_id={}".format(str(cat_id[cid])) # Change this to a valid url that you want to scrape
+            return get_video_list(url,engines[index])
+        elif category == "Comics":
+            cat=['all','日本动漫','国产动漫','欧美动漫','海外动漫']
+            cat_id=['',242,243,244,252]
+            cid= xbmcgui.Dialog().contextmenu(list=cat)
+            if region == -1:
+                region == 1
+            url = prefix+"/vod/list.html?type_id=148&cate_id={}".format(str(cat_id[cid])) # Change this to a valid url that you want to scrape
+            return get_video_list(url,engines[index])
+        elif category == "Entertainment":
+            cat=['All--全部','大陆综艺','港台综艺','欧美综艺','日韩综艺','海外综艺']
+            cat_id=['',245,247,248,250,251]
+            cid= xbmcgui.Dialog().contextmenu(list=cat)
+
+            url = prefix+"/vod/list.html?type_id=142&cate_id={}".format(str(cat_id[cid]))# Change this to a valid url that you want to scrape
+            return get_video_list(url,engines[index])
+        elif category == "Search":
+            query = get_user_input() # User input via onscreen keyboard
+            if not query:
+                return get_videos(category) # Return empty list if query is blank
+            url = prefix+"/search.html?keyword={}".format(quote(query)) # Change this to a valid url for search results that you want to scrape
+            return get_video_list(url,engines[index])
+            
     elif engines[index] == 'pkmkv':
         if category == "Movies":
             page=[ '','动作','喜剧','爱情','科幻','恐怖','剧情','战争','纪录','悬疑','犯罪','奇幻','冒险','儿童','动画','歌舞','音乐','惊悚',
