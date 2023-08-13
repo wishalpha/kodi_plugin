@@ -93,6 +93,26 @@ def retrive_video_info(url,engin):
             links_m3u8.append('http'+v_link+'index.m3u8')      
         #for li in lists[1].find_all('li')[:-1]:
             #links_m3u8.append(li.find('a')['href'].strip())
+    elif engin == 'taopian':
+        response=get(url)
+        content=BS(response.content,'html.parser')
+        title=content.find('span',class_='name').text.strip()
+        region=None
+        lang = None
+        status=None
+        genre=None 
+        year=None
+        thumb=content.find('img',class_='lazyload')['data-original'].strip()
+        intro=content.find('pre',id='pretags').text.strip() 
+        lists=content.find_all('input',class_='m3u8')
+        links_m3u8=[]
+        links=[]
+        for li in lists:
+            vlink=li['value'].strip()
+            links.append(vlink)
+            links_m3u8.append(vlink)      
+        #for li in lists[1].find_all('li')[:-1]:
+            #links_m3u8.append(li.find('a')['href'].strip())
     elif engin == 'pianku':
         prefix='https://www.pian-ku.com'
         response=get(url)
@@ -334,6 +354,20 @@ def get_video_list(url,engin):
                 _next=prefix+content.find('a',title='下一页')['href'].strip()
             except:
                 _next=url
+        elif engin == 'taopian':
+            prefix='https://www.taopianzy.com'
+            response=get(url)
+            content=BS(response.content,'html.parser')
+            v_lists=content.find_all('span',class_='fontbule')
+            for v_list in v_lists:
+                t_url=prefix+v_list.find('a')['href'].strip()
+                videos.append([v_list.find('a').text.strip(),
+                    t_url])
+            try:
+                #_next=url.split('page=')[-1]+str(int(url.split('page=')[-1][0])+1)+url.split('page=')[-1][1:]
+                _next=url[:-1]+str(int(url[-1])+1)
+            except:
+                _next=url
         elif engin == 'wujinvod':
             prefix='https://wjvod.com'
             response=get(url)
@@ -503,13 +537,13 @@ def get_videos(category):
             area=['全部','中国','香港','台湾','美国','英国','法国','日本','韩国','泰国','印度','其它']
             area_id=['',110,111,112,113,114,115,116,117,118,119,109]
             aid= xbmcgui.Dialog().contextmenu(list=area)
-            url = prefix+"/vod/list.html?type_id=1&cate_id={}&year_id=&area_id={}".format(str(cat_id[cid]),str(area_id[aid])) # Change this to a valid url that you want to scrape
+            url = prefix+"/vod/list.html?type_id=1&cate_id={}&year_id=&area_id={}&page=1".format(str(cat_id[cid]),str(area_id[aid])) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "TVshows":
             cat=['all','欧美剧','海外剧','国产剧','香港剧','日本剧','韩国剧','泰国剧','台湾剧']
             cat_id=['',232,237,238,239,240,241,246,249]
             cid= xbmcgui.Dialog().contextmenu(list=cat)
-            url = prefix+"/vod/list.html?type_id=20&cate_id={}".format(str(cat_id[cid])) # Change this to a valid url that you want to scrape
+            url = prefix+"/vod/list.html?type_id=20&cate_id={}&page=1".format(str(cat_id[cid])) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "Comics":
             cat=['all','日本动漫','国产动漫','欧美动漫','海外动漫']
@@ -517,22 +551,22 @@ def get_videos(category):
             cid= xbmcgui.Dialog().contextmenu(list=cat)
             if region == -1:
                 region == 1
-            url = prefix+"/vod/list.html?type_id=148&cate_id={}".format(str(cat_id[cid])) # Change this to a valid url that you want to scrape
+            url = prefix+"/vod/list.html?type_id=148&cate_id={}&page=1".format(str(cat_id[cid])) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "Entertainment":
             cat=['All--全部','大陆综艺','港台综艺','欧美综艺','日韩综艺','海外综艺']
             cat_id=['',245,247,248,250,251]
             cid= xbmcgui.Dialog().contextmenu(list=cat)
 
-            url = prefix+"/vod/list.html?type_id=142&cate_id={}".format(str(cat_id[cid]))# Change this to a valid url that you want to scrape
+            url = prefix+"/vod/list.html?type_id=142&cate_id={}&page=1".format(str(cat_id[cid]))# Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "Search":
             query = get_user_input() # User input via onscreen keyboard
             if not query:
                 return get_videos(category) # Return empty list if query is blank
-            url = prefix+"/search.html?keyword={}".format(quote(query)) # Change this to a valid url for search results that you want to scrape
+            url = prefix+"/search.html?keyword={}&page=1".format(quote(query)) # Change this to a valid url for search results that you want to scrape
             return get_video_list(url,engines[index])
-            
+
     elif engines[index] == 'pkmkv':
         if category == "Movies":
             page=[ '','动作','喜剧','爱情','科幻','恐怖','剧情','战争','纪录','悬疑','犯罪','奇幻','冒险','儿童','动画','歌舞','音乐','惊悚',
