@@ -128,7 +128,7 @@ def retrive_video_info(url,engin):
         thumb=prefix+content.find('a',class_='vodlist_thumb')['data-original'].strip()
         intro=content.find('div',class_='full_text').find('span').text.strip() 
         lists=content.find_all('ul',class_='content_playlist')
-        y=xbmcgui.Dialog().contextmenu(list=['source: 'str(x+1) for x in range(len(lists))])
+        y=xbmcgui.Dialog().contextmenu(list=['source: '+ str(x+1) for x in range(len(lists))])
         links_m3u8=[]
         links=[]
         for li in lists[y].find_all('li'):
