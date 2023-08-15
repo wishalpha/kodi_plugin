@@ -1,8 +1,13 @@
 # coding: utf-8
 import sys
-from urllib.parse import urlencode
-from urllib.parse import quote
-from urllib.parse import parse_qsl
+
+try:
+    from urllib import urlencode
+    from urllib import quote
+    from urlparse import parse_qsl
+except ImportError:
+    from urllib.parse import urlencode,quote,parse_qsl
+
 
 from bs4 import BeautifulSoup as BS
 from requests import get
@@ -90,7 +95,56 @@ def retrive_video_info(url,engin):
             links_m3u8.append('http'+v_link+'index.m3u8')      
         #for li in lists[1].find_all('li')[:-1]:
             #links_m3u8.append(li.find('a')['href'].strip())
+    elif engin == 'taopian':
+        response=get(url)
+        content=BS(response.content,'html.parser')
+        title=content.find('span',class_='name').text.strip()
+        region=None
+        lang = None
+        status=None
+        genre=None 
+        year=None
+        thumb=content.find('img',class_='lazyload')['data-original'].strip()
+        intro=content.find('pre',id='pretags').text.strip() 
+        lists=content.find_all('input',class_='m3u8')
+        links_m3u8=[]
+        links=[]
+        for li in lists:
+            vlink=li['value'].strip()
+            links.append(vlink)
+            links_m3u8.append(vlink)      
+        #for li in lists[1].find_all('li')[:-1]:
+            #links_m3u8.append(li.find('a')['href'].strip())
     elif engin == 'pianku':
+        prefix='https://www.pian-ku.com'
+        response=get(url)
+        content=BS(response.content,'html.parser')
+        title=content.find('a',class_='vodlist_thumb')['title'].strip()
+        region=None
+        lang = None
+        status=None
+        genre=None 
+        year=None
+        thumb=prefix+content.find('a',class_='vodlist_thumb')['data-original'].strip()
+        intro=content.find('div',class_='full_text').find('span').text.strip() 
+        lists=content.find_all('ul',class_='content_playlist')
+        y=xbmcgui.Dialog().contextmenu(list=['source: 'str(x+1) for x in range(len(lists))])
+        links_m3u8=[]
+        links=[]
+        for li in lists[y].find_all('li'):
+            v_url=prefix+li.find('a')['href'].strip()
+            #xbmc.log('check the url '+v_url)
+            v_response=get(v_url)
+            v_content=BS(v_response.content,'html.parser')
+            #v_link=v_content.find('div',class_='stui-player__video').find('script').text.strip().split('http')[-1].split('index.m3u8')[0].replace('\\','')
+            v_link=v_content.find('div',class_='player_video').find('script').string
+            v_link=''.join(v_link).split('http')[-1].split('index.m3u8')[0].replace('\\','')
+            #xbmc.log('get the url '+v_link)
+            links.append('http'+v_link+'index.m3u8')
+            links_m3u8.append('http'+v_link+'index.m3u8')      
+        #for li in lists[1].find_all('li')[:-1]:
+            #links_m3u8.append(li.find('a')['href'].strip())
+    elif engin == 'pkmkv':
         response=get(url)
         content=BS(response.content,'html.parser')
         #xbmc.log('***************'+url)
@@ -290,7 +344,7 @@ def get_video_list(url,engin):
         videos = []
         _next=url
         if engin == 'feifan':
-            prefix='http://ffzy5.tv'
+            prefix='http://ffzy1.tv'
             response=get(url)
             content=BS(response.content,'html.parser')
             v_lists=content.find('ul',class_='videoContent').find_all('li')
@@ -300,6 +354,20 @@ def get_video_list(url,engin):
                     t_url])
             try:
                 _next=prefix+content.find('a',title='下一页')['href'].strip()
+            except:
+                _next=url
+        elif engin == 'taopian':
+            prefix='https://www.taopianzy.com'
+            response=get(url)
+            content=BS(response.content,'html.parser')
+            v_lists=content.find_all('span',class_='fontbule')
+            for v_list in v_lists:
+                t_url=prefix+v_list.find('a')['href'].strip()
+                videos.append([v_list.find('a').text.strip(),
+                    t_url])
+            try:
+                #_next=url.split('page=')[-1]+str(int(url.split('page=')[-1][0])+1)+url.split('page=')[-1][1:]
+                _next=url[:-1]+str(int(url[-1])+1)
             except:
                 _next=url
         elif engin == 'wujinvod':
@@ -317,7 +385,7 @@ def get_video_list(url,engin):
                 _next=prefix+content.find('ul',class_='stui-page').find_all('li')[-2].find('a')['href'].strip()
             except:
                 _next=url
-        elif engin == 'pianku':
+        elif engin == 'pkmkv':
             response=get(url)
             #xbmc.log('check url '+url)
             content=BS(response.content,'html.parser')
@@ -339,7 +407,27 @@ def get_video_list(url,engin):
                 _next='https://www.pkmkv.com'+content.find('a',class_='a1')['href'].strip()
             except:
                 _next=url
+        elif engin == 'pianku':
+            prefix='https://www.pian-ku.com'
+            response=get(url)
+            #xbmc.log('check url '+url)
+            content=BS(response.content,'html.parser')
+            
+            v_lists=content.find_all('a',class_='vodlist_thumb')  
+            for v_list in v_lists:
+                t_url=prefix+v_list['href'].strip()
+                #infos=v_list.find('div',class_='tag').text.strip()
+                v_info={'title':v_list['title'].strip(),
+                        'thumb':prefix+v_list['data-original'].strip()
+                        }
+                videos.append([v_info,t_url])
+            try:
+                _next=prefix+content.find('ul',class_='page').find_all('li')[-2].find('a')['href'].strip()
+
+            except:
+                _next=url
         elif engin == 'shandian':
+            prefix='https://shandianzy.com'
             response=get(url)
             content=BS(response.content,'html.parser')
             v_lists=content.find_all('span',class_='xing_vb4')
@@ -401,15 +489,17 @@ def get_video_list(url,engin):
         return videos,_next,engin
 
 def get_videos(category):
+
     index = xbmcgui.Dialog().contextmenu(list=engines)
     if index == -1:
         index=0
     if engines[index] == 'feifan':
+        prefix='http://ffzy1.tv'
         if category == "Movies":
             cat=['All--全部','action--动作片','Comedy--喜剧片','SciFi--科幻片','Horor--恐怖片','Romance--爱情片','Drama--剧情片','War--战争片','Documentary--记录片']
             page=[1,6,7,9,10,8,11,12,20]
             genre= xbmcgui.Dialog().contextmenu(list=cat)
-            url = "http://ffzy5.tv/index.php/vod/type/id/{}/page/1.html".format(page[genre]) # Change this to a valid url that you want to scrape
+            url = prefix+"/index.php/vod/type/id/{}/page/1.html".format(page[genre]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "TVshows":
             cat=['All--全部','Mainland--国产剧','US-EU--欧美剧','Hongkong--香港剧','Koren--韩国片','Taiwan--台湾片','Japan--日本片','World--海外片','Tailand--泰国片']
@@ -417,7 +507,7 @@ def get_videos(category):
             region= xbmcgui.Dialog().contextmenu(list=cat)
             if region == -1:
                 region == 1
-            url = "http://ffzy5.tv/index.php/vod/type/id/{}/page/1.html".format(page[region]) # Change this to a valid url that you want to scrape
+            url = prefix+"/index.php/vod/type/id/{}/page/1.html".format(page[region]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "Comics":
             cat=['All--全部','Mainland--国产动漫','JP_KR--日韩动漫','US_EU--欧美动漫','HK_TW--港台动漫','World--海外动漫']
@@ -425,7 +515,7 @@ def get_videos(category):
             region= xbmcgui.Dialog().contextmenu(list=cat)
             if region == -1:
                 region == 1
-            url = "http://ffzy5.tv/index.php/vod/type/id/{}/page/1.html".format(page[region]) # Change this to a valid url that you want to scrape
+            url = prefix+"/index.php/vod/type/id/{}/page/1.html".format(page[region]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "Entertainment":
             cat=['All--全部','Mainland--大陆综艺','US-EU--港台综艺','Hongkong--日韩综艺','Koren--欧美综艺']
@@ -433,15 +523,54 @@ def get_videos(category):
             region= xbmcgui.Dialog().contextmenu(list=cat)
             if region == -1:
                 region == 1
-            url = "http://ffzy5.tv/index.php/vod/type/id/{}/page/1.html".format(page[region]) # Change this to a valid url that you want to scrape
+            url = prefix+"/index.php/vod/type/id/{}/page/1.html".format(page[region]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
         elif category == "Search":
             query = get_user_input() # User input via onscreen keyboard
             if not query:
                 return get_videos(category) # Return empty list if query is blank
-            url = "http://ffzy5.tv/index.php/vod/search/page/1/wd/{}.html".format(quote(query)) # Change this to a valid url for search results that you want to scrape
+            url = prefix+"/index.php/vod/search/page/1/wd/{}.html".format(quote(query)) # Change this to a valid url for search results that you want to scrape
             return get_video_list(url,engines[index])
-    elif engines[index] == 'pianku':
+    if engines[index] == 'taopian':
+        prefix='https://www.taopianzy.com/'
+        if category == "Movies":
+            cat=['全部','战争片','奇幻片','科幻片','剧情片','惊悚片','恐怖片','爱情片','动作片','喜剧片','动画片','冒险片','悬疑片','纪录片']
+            cat_id=['',235,233,234,222,223,226,227,228,229,230,231,128,18]
+            cid= xbmcgui.Dialog().contextmenu(list=cat)
+            area=['全部','中国','香港','台湾','美国','英国','法国','日本','韩国','泰国','印度','其它']
+            area_id=['',110,111,112,113,114,115,116,117,118,119,109]
+            aid= xbmcgui.Dialog().contextmenu(list=area)
+            url = prefix+"/vod/list.html?type_id=1&cate_id={}&year_id=&area_id={}&page=1".format(str(cat_id[cid]),str(area_id[aid])) # Change this to a valid url that you want to scrape
+            return get_video_list(url,engines[index])
+        elif category == "TVshows":
+            cat=['all','欧美剧','海外剧','国产剧','香港剧','日本剧','韩国剧','泰国剧','台湾剧']
+            cat_id=['',232,237,238,239,240,241,246,249]
+            cid= xbmcgui.Dialog().contextmenu(list=cat)
+            url = prefix+"/vod/list.html?type_id=20&cate_id={}&page=1".format(str(cat_id[cid])) # Change this to a valid url that you want to scrape
+            return get_video_list(url,engines[index])
+        elif category == "Comics":
+            cat=['all','日本动漫','国产动漫','欧美动漫','海外动漫']
+            cat_id=['',242,243,244,252]
+            cid= xbmcgui.Dialog().contextmenu(list=cat)
+            if region == -1:
+                region == 1
+            url = prefix+"/vod/list.html?type_id=148&cate_id={}&page=1".format(str(cat_id[cid])) # Change this to a valid url that you want to scrape
+            return get_video_list(url,engines[index])
+        elif category == "Entertainment":
+            cat=['All--全部','大陆综艺','港台综艺','欧美综艺','日韩综艺','海外综艺']
+            cat_id=['',245,247,248,250,251]
+            cid= xbmcgui.Dialog().contextmenu(list=cat)
+
+            url = prefix+"/vod/list.html?type_id=142&cate_id={}&page=1".format(str(cat_id[cid]))# Change this to a valid url that you want to scrape
+            return get_video_list(url,engines[index])
+        elif category == "Search":
+            query = get_user_input() # User input via onscreen keyboard
+            if not query:
+                return get_videos(category) # Return empty list if query is blank
+            url = prefix+"/search.html?keyword={}&page=1".format(quote(query)) # Change this to a valid url for search results that you want to scrape
+            return get_video_list(url,engines[index])
+
+    elif engines[index] == 'pkmkv':
         if category == "Movies":
             page=[ '','动作','喜剧','爱情','科幻','恐怖','剧情','战争','纪录','悬疑','犯罪','奇幻','冒险','儿童','动画','歌舞','音乐','惊悚',
                  '丧尸','传记','西部','灾难','古装','武侠','家庭','短片','校园','文艺','运动','青春','励志','人性','美食','女性','治愈','历史']
@@ -511,6 +640,83 @@ def get_videos(category):
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = "https://www.pkmkv.com/ms/1-{}-{}-{}-----1---{}.html".format(region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
+
+    elif engines[index] == 'pianku':
+        prefix='https://www.pian-ku.com'
+        if category == "Movies":
+            rr=['全部','动作片','喜剧片','爱情片','科幻片','恐怖片','剧情片','战争片','纪录片','惊悚片','奇幻片',
+            '冒险片','电影解说','灾难片','犯罪片','悬疑片','动画片','经典片','网络片','歌舞片']
+            pp= xbmcgui.Dialog().contextmenu(rr)
+            rrr=[1,7,8,9,10,11,12,20,21,22,23,56,27,28,29,30,40,41,44]
+
+            page=[ '','喜剧','爱情','恐怖','动作','科幻','剧情','战争','警匪','犯罪','动画','奇幻','武侠','冒险','枪战','恐怖','悬疑','惊悚','经典','青春','文艺',
+                  '微电影','古装','历史','运动','农村','儿童','网络电影']
+            genre= xbmcgui.Dialog().contextmenu(list=['全部']+page[1:])
+            sorting=['time','hits','score']
+            s=xbmcgui.Dialog().contextmenu(list=sorting)
+         
+            region=['','大陆','香港','台湾','美国','法国','英国','日本','韩国','德国','泰国','印度','意大利','西班牙','加拿大','其他']
+            r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
+            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
+            y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
+            url = prefix+"/vodshow/{}-{}-{}-{}-----1---{}.html".format(str(rrr[pp]),region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
+            return get_video_list(url,engines[index])
+        elif category == "TVshows":
+            page=[ '','古装','战争','青春偶像','喜剧','家庭','犯罪','动作','奇幻','剧情','历史','经典','乡村','情景','商战','网剧','其他']
+            genre= xbmcgui.Dialog().contextmenu(list=['全部']+page[1:])
+            sorting=['time','hits','score']
+            s=xbmcgui.Dialog().contextmenu(list=sorting)
+         
+            region=['全部','国产剧','港台剧','日韩剧','欧美剧','新马剧','泰国剧','其他剧','短剧']
+            r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
+            re=[2,14,15,16,42,26,43,65]
+            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010','2009','2008','2006','2005','2004']
+            y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
+            url = prefix+"/vodshow/{}--{}-{}-----1---{}.html".format(str(re[r]),sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
+            return get_video_list(url,engines[index])
+        elif category == "Comics":
+            page=[ '','情感','科幻','热血','推理','搞笑','冒险','萝莉','校园','动作','机战','运动','战争','少年','少女','社会','原创','亲子','益智','励志','其他']
+            genre= xbmcgui.Dialog().contextmenu(list=['全部']+page[1:])
+            sorting=['time','hits','score']
+            s=xbmcgui.Dialog().contextmenu(list=sorting)
+         
+            region=['全部','国产动漫','欧美动漫','日本动漫','韩国动漫','港台动漫','其他动漫']
+            r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
+            re=[4,33,34,35,36,39,55]
+            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010','2009','2008','2007','2006','2005','2004']
+            y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
+            url = prefix+"/vodshow/{}--{}-{}-----1---{}.html".format(str(re[r]),sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
+            return get_video_list(url,engines[index])
+        elif category == "Entertainment":
+            region=['全部','国内综艺','欧美综艺','日本综艺','韩国综艺','港台综艺','其他综艺']
+
+            r=xbmcgui.Dialog().contextmenu(region)
+            re=[3,31,32,37,38,45,46]
+
+            page=[ '','选秀','情感','访谈','播报','旅游','音乐','美食','纪实','曲艺','生活','游戏互动','财经','求职']
+            genre= xbmcgui.Dialog().contextmenu(list=['全部']+page[1:])
+            sorting=['time','hits','score']
+            s=xbmcgui.Dialog().contextmenu(list=sorting)
+         
+            
+            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010','2009','2008','2007','2006','2005','2004']
+            y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
+            url = prefix+"/vodshow/{}--{}-{}-----1---{}.html".format(str(re[r]),sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
+            return get_video_list(url,engines[index])
+        elif category == "Search":
+            page=[ '','动作','喜剧','爱情','科幻','恐怖','剧情','战争','纪录','悬疑','犯罪','奇幻','冒险','儿童','动画','歌舞','音乐','惊悚',
+                 '丧尸','传记','西部','灾难','古装','武侠','家庭','短片','校园','文艺','运动','青春','励志','人性','美食','女性','治愈','历史']
+            genre= xbmcgui.Dialog().contextmenu(list=['全部']+page[1:])
+            sorting=['time','hits','score']
+            s=xbmcgui.Dialog().contextmenu(list=sorting)
+         
+            region=['','大陆','香港','台湾','美国','法国','英国','日本','韩国','德国','泰国','法国','印度','丹麦','瑞典','荷兰','加拿大',
+                    '俄罗斯','丹麦意大利','比利时','西班牙','澳大利亚','其他']
+            r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
+            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
+            y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
+            url = "https://www.pkmkv.com/ms/1-{}-{}-{}-----1---{}.html".format(region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
+            return get_video_list(url,engines[index])
     elif engines[index] == 'wujinvod':
         if category == "Movies":
             cat=['all--全部','action--动作片','Comedy--喜剧片','Romance--爱情片','SciFi--科幻片',
@@ -544,7 +750,9 @@ def get_videos(category):
             region= xbmcgui.Dialog().contextmenu(list=cat)
             cat2=['time','hits','score']
             sorting=xbmcgui.Dialog().contextmenu(list=cat2)
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011',]
+
+            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011']
+
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             if region == -1:
                 region == -2
@@ -556,7 +764,8 @@ def get_videos(category):
             region= xbmcgui.Dialog().contextmenu(list=cat)
             cat2=['time','hits','score']
             sorting=xbmcgui.Dialog().contextmenu(list=cat2)
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011']
+            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
+
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             if region == -1:
                 region == -2
