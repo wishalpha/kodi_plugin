@@ -21,7 +21,7 @@ _url = sys.argv[0]
 _handle = int(sys.argv[1])
 
 CATEGORIES = ["Movies", "TVshows","Comics","Entertainment","Search" ]
-engines =['wujinvod','pianku','feifan','shandian','liangzi','tiankong','guangsu','wolong']
+engines =['wujinvod','pianku','feifan','taopian','shandian','liangzi','tiankong','guangsu','wolong']
 
 def get_user_input():  
     kb = xbmc.Keyboard('', 'Please enter the video title')
@@ -128,7 +128,7 @@ def retrive_video_info(url,engin):
         thumb=prefix+content.find('a',class_='vodlist_thumb')['data-original'].strip()
         intro=content.find('div',class_='full_text').find('span').text.strip() 
         lists=content.find_all('ul',class_='content_playlist')
-        y=xbmcgui.Dialog().contextmenu(list=['source: 'str(x+1) for x in range(len(lists))])
+        y=xbmcgui.Dialog().contextmenu(list=['source: '+ str(x+1) for x in range(len(lists))])
         links_m3u8=[]
         links=[]
         for li in lists[y].find_all('li'):
@@ -1011,7 +1011,7 @@ def list_videos(category):
             list_item.setInfo('video', {'title': video[0]['title'] })
             list_item.setArt({'thumb': video[0]['thumb'], 'icon': video[0]['thumb'], 'fanart': video[0]['thumb']})
         elif engin == 'pianku':
-            list_item = xbmcgui.ListItem(label=video[0]['title']+'    '+video[0]['genre']+'    '+video[0]['region']+'    '+video[0]['lang']+'    '+video[0]['score'])
+            list_item = xbmcgui.ListItem(label=video[0]['title'])
             #list_item.setInfo('video', {'title': video[0]['title'], 'genre': video[0]['genre'], 'country': video[0]['region'],
                                        #'rating': float(video[0]['score'])})
             list_item.setArt({'thumb': video[0]['thumb'], 'icon': video[0]['thumb'], 'fanart': video[0]['thumb']})
