@@ -1,11 +1,13 @@
 # coding: utf-8
 import sys
+
 try:
     from urllib import urlencode
     from urllib import quote
     from urlparse import parse_qsl
 except ImportError:
     from urllib.parse import urlencode,quote,parse_qsl
+
 
 from bs4 import BeautifulSoup as BS
 from requests import get
@@ -421,6 +423,7 @@ def get_video_list(url,engin):
                 videos.append([v_info,t_url])
             try:
                 _next=prefix+content.find('ul',class_='page').find_all('li')[-2].find('a')['href'].strip()
+
             except:
                 _next=url
         elif engin == 'shandian':
@@ -747,7 +750,9 @@ def get_videos(category):
             region= xbmcgui.Dialog().contextmenu(list=cat)
             cat2=['time','hits','score']
             sorting=xbmcgui.Dialog().contextmenu(list=cat2)
+
             year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011']
+
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             if region == -1:
                 region == -2
@@ -760,6 +765,7 @@ def get_videos(category):
             cat2=['time','hits','score']
             sorting=xbmcgui.Dialog().contextmenu(list=cat2)
             year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
+
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             if region == -1:
                 region == -2
