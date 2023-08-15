@@ -21,7 +21,7 @@ _url = sys.argv[0]
 _handle = int(sys.argv[1])
 
 CATEGORIES = ["Movies", "TVshows","Comics","Entertainment","Search" ]
-engines =['wujinvod','pianku','feifan','shandian','liangzi','tiankong','guangsu','wolong']
+engines =['wujinvod','pianku','feifan','taopian','shandian','liangzi','tiankong','guangsu','wolong']
 
 def get_user_input():  
     kb = xbmc.Keyboard('', 'Please enter the video title')
