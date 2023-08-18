@@ -1008,7 +1008,7 @@ def list_videos(category):
         
         if engin == 'wujinvod':
             list_item = xbmcgui.ListItem(label=video[0]['title'])
-            list_item.setInfo('video', {'title': video[0]['title'] })
+            #list_item.setInfo('video', {'title': video[0]['title'] })
             list_item.setArt({'thumb': video[0]['thumb'], 'icon': video[0]['thumb'], 'fanart': video[0]['thumb']})
         elif engin == 'pianku':
             list_item = xbmcgui.ListItem(label=video[0]['title'])
@@ -1029,7 +1029,7 @@ def list_videos_next (url,engin):
     for i,video in enumerate(videos):
         if engin == 'wujinvod':
             list_item = xbmcgui.ListItem(label=video[0]['title'])
-            list_item.setInfo('video', {'title': video['title']})
+            #list_item.setInfo('video', {'title': video['title']})
             list_item.setArt({'thumb': video['thumb'], 'icon': video['thumb'], 'fanart': video['thumb']})
         elif engin == 'pianku':
             list_item = xbmcgui.ListItem(label=video[0]['title']+'    '+video[0]['genre']+'    '+video[0]['region']+'    '+video[0]['lang']+'    '+video[0]['score'])
@@ -1061,7 +1061,7 @@ def list_episode(e_url,engin):
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
         i+=1
     # Add a sort method for the virtual folder items (alphabetically, ignore articles)
-    xbmcplugin.addSortMethod(_handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+    # xbmcplugin.addSortMethod(_handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     # Finish creating a virtual folder.
     xbmcplugin.endOfDirectory(_handle)
 def play_video(path):
