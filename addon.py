@@ -334,9 +334,9 @@ def get_episode_list(e_url,engin):
         
         video_info=retrive_video_info(e_url,engin)
 
-        source=['links','m3u8']
-        index = xbmcgui.Dialog().contextmenu(list=source)
-
+        #source=['links','m3u8']
+        #index = xbmcgui.Dialog().contextmenu(list=source)
+        index=1
        
         return video_info,index
     
@@ -488,11 +488,11 @@ def get_video_list(url,engin):
        
         return videos,_next,engin
 
-def get_videos(category):
+def get_videos(category,index):
 
-    index = xbmcgui.Dialog().contextmenu(list=engines)
-    if index == -1:
-        index=0
+    #index = xbmcgui.Dialog().contextmenu(list=engines)
+    #if index == -1:
+    #    index=0
     if engines[index] == 'feifan':
         prefix='http://ffzy1.tv'
         if category == "Movies":
@@ -989,11 +989,14 @@ def get_videos(category):
 
 def home_list():
     categories = get_home()
+    index = xbmcgui.Dialog().contextmenu(list=engines)
+    if index == -1:
+        index=0
     # Iterate through categories
     for category in categories:
         # Create a list item with a text label and a thumbnail image.
         list_item = xbmcgui.ListItem(label=category)
-        url = get_url(action='searching', category=category)
+        url = get_url(action='searching', category=category,index=index)
 
         is_folder = True
 
@@ -1001,9 +1004,9 @@ def home_list():
     xbmcplugin.endOfDirectory(_handle)
 
 
-def list_videos(category):
+def list_videos(category,index):
     
-    videos,_next,engin = get_videos(category)
+    videos,_next,engin = get_videos(category,index)
     for i,video in enumerate(videos):
         
         if engin == 'wujinvod':
@@ -1067,7 +1070,7 @@ def list_episode(e_url,engin):
 def play_video(path):
     play_item = xbmcgui.ListItem(path=path)
     xbmcplugin.setResolvedUrl(_handle, True, listitem=play_item)
-
+    
 
 def router(paramstring):
     params = dict(parse_qsl(paramstring))
@@ -1075,7 +1078,7 @@ def router(paramstring):
     if params:
         if params['action'] == 'searching':
             # Display the list of videos in a provided category.
-            list_videos(params['category'])
+            list_videos(params['category'],params['index'])
         elif params['action'] == 'listing':
             # Display the list of videos in a provided category.
             list_episode(params['eposide'],params['engin'])
