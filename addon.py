@@ -1006,7 +1006,7 @@ def home_list():
 
 def list_videos(category,index):
     
-    videos,_next,engin = get_videos(category,index)
+    videos,_next,engin = get_videos(category,int(index))
     for i,video in enumerate(videos):
         
         if engin == 'wujinvod':
