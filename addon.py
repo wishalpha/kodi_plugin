@@ -528,7 +528,7 @@ def get_videos(category,index):
         elif category == "Search":
             query = get_user_input() # User input via onscreen keyboard
             if not query:
-                return get_videos(category) # Return empty list if query is blank
+                return get_videos(category,index) # Return empty list if query is blank
             url = prefix+"/index.php/vod/search/page/1/wd/{}.html".format(quote(query)) # Change this to a valid url for search results that you want to scrape
             return get_video_list(url,engines[index])
     if engines[index] == 'taopian':
@@ -566,7 +566,7 @@ def get_videos(category,index):
         elif category == "Search":
             query = get_user_input() # User input via onscreen keyboard
             if not query:
-                return get_videos(category) # Return empty list if query is blank
+                return get_videos(category,index) # Return empty list if query is blank
             url = prefix+"/search.html?keyword={}&page=1".format(quote(query)) # Change this to a valid url for search results that you want to scrape
             return get_video_list(url,engines[index])
 
@@ -774,7 +774,7 @@ def get_videos(category,index):
         elif category == "Search":
             query = get_user_input() # User input via onscreen keyboard
             if not query:
-                return get_videos(category) # Return empty list if query is blank
+                return get_videos(category,index) # Return empty list if query is blank
             url = "https://www.wjvod.com/vodsearch/{}----------1---.html".format(quote(query)) # Change this to a valid url for search results that you want to scrape
             return get_video_list(url,engines[index])
     elif engines[index] == 'shandian':
@@ -856,7 +856,7 @@ def get_videos(category,index):
         elif category == "Search":
             query = get_user_input() # User input via onscreen keyboard
             if not query:
-                return get_videos(category) # Return empty list if query is blank
+                return get_videos(category,index) # Return empty list if query is blank
             url = prefix+"/index.php/vod/search/page/1/wd/{}.html".format(quote(query)) # Change this to a valid url for search results that you want to scrape
             return get_video_list(url,engines[index])
     elif engines[index] == 'tiankong':
@@ -898,7 +898,7 @@ def get_videos(category,index):
         elif category == "Search":
             query = get_user_input() # User input via onscreen keyboard
             if not query:
-                return get_videos(category) # Return empty list if query is blank
+                return get_videos(category,index) # Return empty list if query is blank
             url = prefix+"vod/search/page/1/wd/{}.html".format(quote(query)) # Change this to a valid url for search results that you want to scrape
             return get_video_list(url,engines[index])
     elif engines[index] == 'guangsu':
@@ -941,7 +941,7 @@ def get_videos(category,index):
         elif category == "Search":
             query = get_user_input() # User input via onscreen keyboard
             if not query:
-                return get_videos(category) # Return empty list if query is blank
+                return get_videos(category,index) # Return empty list if query is blank
             url = prefix+"index.php/vod/search/page/1/wd/{}.html".format(quote(query)) # Change this to a valid url for search results that you want to scrape
             return get_video_list(url,engines[index])
     elif engines[index] == 'wolong':
@@ -983,7 +983,7 @@ def get_videos(category,index):
         elif category == "Search":
             query = get_user_input() # User input via onscreen keyboard
             if not query:
-                return get_videos(category) # Return empty list if query is blank
+                return get_videos(category,index) # Return empty list if query is blank
             url = prefix+"index.php/vod/search/page/1/wd/{}.html".format(quote(query)) # Change this to a valid url for search results that you want to scrape
             return get_video_list(url,engines[index])
 
@@ -1001,6 +1001,12 @@ def home_list():
         is_folder = True
 
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
+    list_item = xbmcgui.ListItem(label='Change Engine')
+    url = get_url(action='home')
+
+    is_folder = True
+
+    xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
     xbmcplugin.endOfDirectory(_handle)
 
 
@@ -1088,6 +1094,9 @@ def router(paramstring):
         elif params['action'] == 'play':
             # Play a video from a provided URL.
             play_video(params['video'])
+        elif params['action'] == 'home':
+            # Play a video from a provided URL.
+            home_list()
         else:
             raise ValueError('Invalid paramstring: {0}!'.format(paramstring))
     else:
