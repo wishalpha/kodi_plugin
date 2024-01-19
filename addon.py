@@ -31,6 +31,14 @@ def get_user_input():
     query = kb.getText() # User input
     return query
 
+def get_ip():  
+    kb = xbmc.Keyboard('192.168.1.253', 'Please enter server ip')
+    kb.doModal() # Onscreen keyboard appears
+    if not kb.isConfirmed():
+        return '192.168.1.253'
+    query = kb.getText() # User input
+    return query
+
 def get_url(**kwargs):
     return '{0}?{1}'.format(_url, urlencode(kwargs))
 def get_home():
@@ -1003,10 +1011,15 @@ def home_list():
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
     list_item = xbmcgui.ListItem(label='Change Engine')
     url = get_url(action='home')
-
     is_folder = True
-
     xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
+
+    ip = get_ip()
+    list_item = xbmcgui.ListItem(label='Xiaoya')
+    url = get_url(action='xiaoya',ip=ip,path='')
+    is_folder = True
+    xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
+
     xbmcplugin.endOfDirectory(_handle)
 
 
@@ -1073,6 +1086,32 @@ def list_episode(e_url,engin):
     # xbmcplugin.addSortMethod(_handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     # Finish creating a virtual folder.
     xbmcplugin.endOfDirectory(_handle)
+def get_content(file_path):
+    types = ['mp4', 'mp3', 'mkv', 'avi', 'webm', 'mov','flv']
+    contents=[]
+    
+    dirs,files_list = xbmcvfs.listdir(file_path)
+         
+    for item in files_list:           
+        if items.split('.')[-1].lower() in types:
+            contents += item
+    return dirs,contents  
+
+def list_xiaoya(ip,path):
+    server_path = f'dav://guest:guest_Api789@{ip}:5678/dav'
+    dirs,contents = get_content (os.path.join(server_path,path))
+    for item in dirs:
+        list_item = xbmcgui.ListItem(label=item)
+        url = get_url(action='xiaoya', ip=ip,path=os.path.join(path+item))
+        is_folder = True   
+        xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
+    for item in contents:
+        list_item = xbmcgui.ListItem(label=item)
+        url = get_url(action='play', video=os.path.join(server_path,path,item))
+        is_folder = False   
+        xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
+    xbmcplugin.endOfDirectory(_handle)
+
 def play_video(path):
     play_item = xbmcgui.ListItem(path=path)
     xbmcplugin.setResolvedUrl(_handle, True, listitem=play_item)
@@ -1080,6 +1119,7 @@ def play_video(path):
 
 def router(paramstring):
     params = dict(parse_qsl(paramstring))
+    
     # Check the parameters passed to the plugin
     if params:
         if params['action'] == 'searching':
@@ -1091,6 +1131,9 @@ def router(paramstring):
         elif params['action'] == 'listing_next':
             # Display the list of videos in a provided category.
             list_videos_next(params['url'],params['engin'])
+        elif params['action'] == 'xiaoya':
+            # Display the list of videos/folder in a xiaoya webdav.           
+            list_xiaoya(params['ip'],params['path'])
         elif params['action'] == 'play':
             # Play a video from a provided URL.
             play_video(params['video'])
