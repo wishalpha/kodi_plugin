@@ -38,7 +38,7 @@ def get_ip():
     #    for line in file:
     #        server_list.append(line.strip())
     ip_index= xbmcgui.Dialog().contextmenu(list=['new']+server_list)
-    if ip_index == 0:
+    if ip_index == 1:
         kb = xbmc.Keyboard('192.168.1.1', 'Please enter server ip')
         kb.doModal() # Onscreen keyboard appears
         if not kb.isConfirmed():
@@ -47,7 +47,7 @@ def get_ip():
     #    with open(file_path, 'a') as file:
     #        file.write(query+'\n')
         return query
-    return server_list[ip_index]
+    return server_list[ip_index-1]
 def get_url(**kwargs):
     return '{0}?{1}'.format(_url, urlencode(kwargs))
 def get_home():
