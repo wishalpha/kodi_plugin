@@ -1160,7 +1160,7 @@ def list_xiaoya(path):
     xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
 
     dir_path, video_path = get_content (path)
-    for p in dir_path:
+    for p in dir_path[1:]:
         list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
         url = get_url(action='xiaoya_list', path=p)
         is_folder = True   
@@ -1194,9 +1194,9 @@ def find_xiaoya(path):
     xbmcplugin.endOfDirectory(_handle)
 
 def play_video(path):
-    #play_item = xbmcgui.ListItem(path=path)
-    #xbmcplugin.setResolvedUrl(_handle, True, listitem=play_item)
-    xbmc.Player(path)
+    play_item = xbmcgui.ListItem(path=path)
+    xbmcplugin.setResolvedUrl(_handle, True, listitem=play_item)
+    #xbmc.Player(path)
     
 
 def router(paramstring):
