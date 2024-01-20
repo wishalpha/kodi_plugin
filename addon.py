@@ -1102,7 +1102,7 @@ def get_content(file_path):
     dir_path=[]
     dirs,files_list = xbmcvfs.listdir(file_path)
     for d in dirs:
-        dir_path.append(os.path.join(file_path,d)
+        dir_path.append(os.path.join(file_path,d))
     for item in files_list:           
         if items.split('.')[-1].lower() in types:
             video_path.append(os.path.join(file_path,item)) 
