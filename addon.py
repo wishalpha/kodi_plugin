@@ -1125,7 +1125,7 @@ def search_content(file_path,keywords):
         #xbmc.log('search in :'+d,xbmc.LOGERROR)
         if keywords in to_text(os.path.basename(d)):
             temp.append(os.path.join(file_path,d))
-    for d in file_list:
+    for d in files_list:
         #xbmc.log('search in :'+d,xbmc.LOGERROR)
         if keywords in to_text(os.path.basename(d)):
             temp2.append(os.path.join(file_path,d))
@@ -1226,6 +1226,7 @@ def router(paramstring):
             home_xiaoya(f'dav://guest:guest_Api789@{get_ip()}:5678')
         elif params['action'] == 'play':
             # Play a video from a provided URL.
+            xbmc.log('Playing :'+to_text(params['video']),xbmc.LOGERROR)
             play_video(params['video'])
             
         elif params['action'] == 'home':
