@@ -1025,7 +1025,7 @@ def home_list():
 
     
     list_item = xbmcgui.ListItem(label='Xiaoya')
-    url = get_url(action='xiaoya_home',ip=ip,path='')
+    url = get_url(action='xiaoya_home')
     is_folder = True
     xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
 
