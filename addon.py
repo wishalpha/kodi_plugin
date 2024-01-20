@@ -1087,7 +1087,8 @@ def list_episode(e_url,engin):
     # Finish creating a virtual folder.
     xbmcplugin.endOfDirectory(_handle)
 def get_content(file_path):
-    types = ['mp4', 'mp3', 'mkv', 'avi', 'webm', 'mov','flv']
+    types = ['mp4', 'mp3', 'mkv', 'avi', 'webm', 'mov','flv','ts','wmv','rm','m4v','3gp',
+            'aac','flac','wav','wma','ogg','m4a']
     video_path=[]
     dir_path=[]
     dirs,files_list = xbmcvfs.listdir(file_path)
@@ -1095,7 +1096,7 @@ def get_content(file_path):
         dir_path.append(os.path.join(file_path,d)
     for item in files_list:           
         if items.split('.')[-1].lower() in types:
-            vidoe.append(os.path.join(file_path,item)) 
+            video_path.append(os.path.join(file_path,item)) 
     return dir_path,video_path
 
 def search_content(file_path,keywords,dir_list=[]):    
@@ -1143,7 +1144,7 @@ def list_xiaoya(ip,path):
 def find_xiaoya(ip,path):
     server_path = f'dav://guest:guest_Api789@{ip}:5678/dav'
     keywords = get_user_input()
-    dir_path= search_content (os.path.join(server_path,path))
+    dir_path= search_content (os.path.join(server_path,path),keywords)
     for path in dir_path:
         list_item = xbmcgui.ListItem(label=os.path.basename(path))
         url = get_url(action='xiaoya_list', ip=ip,path=path)
