@@ -1123,7 +1123,7 @@ def home_xiaoya(ip):
     paths = ['','','电影','电视剧','动漫','纪录片','音乐','综艺']
     for i,item in enumerate(items):
         # Create a list item with a text label and a thumbnail image.
-        list_item = xbmcgui.ListItem(label=items)
+        list_item = xbmcgui.ListItem(label=item)
         url = get_url(action=actions[i],ip=ip, path=paths[i])
         is_folder = True
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
