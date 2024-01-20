@@ -1105,7 +1105,7 @@ def get_content(file_path):
     for d in dirs:
         dir_path.append(os.path.join(file_path,d))
     for item in files_list:           
-        if items.split('.')[-1].lower() in types:
+        if item.split('.')[-1].lower() in types:
             video_path.append(os.path.join(file_path,item)) 
     return dir_path,video_path
 
@@ -1121,7 +1121,7 @@ def search_content(file_path,keywords,dir_list=[]):
 def home_xiaoya(ip):
     items = ['all','search','search Movies', 'search TV shows', 'search Comics', 'search Documentary', 'search Music','search Variety shows']
     actions = ['xiaoya_list','xiaoya_search','xiaoya_search','xiaoya_search','xiaoya_search','xiaoya_search','xiaoya_search','xiaoya_search']
-    paths = ['/','/','电影','电视剧','动漫','纪录片','音乐','综艺']
+    paths = ['dav','dav','dav/电影','dav/电视剧','dav/动漫','dav纪录片','dav/音乐','dav/综艺']
     for i,item in enumerate(items):
         # Create a list item with a text label and a thumbnail image.
         list_item = xbmcgui.ListItem(label=item)
@@ -1136,7 +1136,7 @@ def home_xiaoya(ip):
     xbmcplugin.endOfDirectory(_handle)
 
 def list_xiaoya(ip,path):
-    server_path = f'dav://guest:guest_Api789@{ip}:5678/dav'
+    server_path = f'dav://guest:guest_Api789@{ip}:5678'
     dir_path, video_path = get_content (os.path.join(server_path,path))
     for path in dir_path:
         list_item = xbmcgui.ListItem(label=os.path.basename(path))
@@ -1155,7 +1155,7 @@ def list_xiaoya(ip,path):
     xbmcplugin.endOfDirectory(_handle)
 
 def find_xiaoya(ip,path):
-    server_path = f'dav://guest:guest_Api789@{ip}:5678/dav'
+    server_path = f'dav://guest:guest_Api789@{ip}:5678'
     keywords = get_user_input()
     dir_path= search_content (os.path.join(server_path,path),keywords)
     for path in dir_path:
