@@ -14,6 +14,7 @@ from requests import get
 import xbmcgui
 import xbmcplugin
 import xbmc
+import xbmcvfs
 
 # Get the plugin url in plugin:// notation.
 _url = sys.argv[0]
@@ -1120,7 +1121,7 @@ def search_content(file_path,keywords,dir_list=[]):
 def home_xiaoya(ip):
     items = ['all','search','search Movies', 'search TV shows', 'search Comics', 'search Documentary', 'search Music','search Variety shows']
     actions = ['xiaoya_list','xiaoya_search','xiaoya_search','xiaoya_search','xiaoya_search','xiaoya_search','xiaoya_search','xiaoya_search']
-    paths = [' ',' ','电影','电视剧','动漫','纪录片','音乐','综艺']
+    paths = ['/','/','电影','电视剧','动漫','纪录片','音乐','综艺']
     for i,item in enumerate(items):
         # Create a list item with a text label and a thumbnail image.
         list_item = xbmcgui.ListItem(label=item)
