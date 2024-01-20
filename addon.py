@@ -33,19 +33,19 @@ def get_user_input():
 
 def get_ip():  
     file_path='server_list'
-    server_list = []
-    with open(file_path, 'r') as file:
-        for line in file:
-            server_list.append(line.strip())
+    server_list = [‘127.0.0.1’,'192.168.1.253']
+    #with open(file_path, 'r') as file:
+    #    for line in file:
+    #        server_list.append(line.strip())
     ip_index= xbmcgui.Dialog().contextmenu(list=['new']+server_list)
     if ip_index == 0:
-        kb = xbmc.Keyboard('192.168.1.253', 'Please enter server ip')
+        kb = xbmc.Keyboard('192.168.1.1', 'Please enter server ip')
         kb.doModal() # Onscreen keyboard appears
         if not kb.isConfirmed():
             return '192.168.1.253'
         query = kb.getText() # User input
-        with open(file_path, 'a') as file:
-            file.write(query+'\n')
+    #    with open(file_path, 'a') as file:
+    #        file.write(query+'\n')
         return query
     return server_list[ip_index]
 def get_url(**kwargs):
