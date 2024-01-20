@@ -1,5 +1,5 @@
 # coding: utf-8
-import sys
+import sys,os
 
 try:
     from urllib import urlencode
@@ -1120,7 +1120,7 @@ def search_content(file_path,keywords,dir_list=[]):
 def home_xiaoya(ip):
     items = ['all','search','search Movies', 'search TV shows', 'search Comics', 'search Documentary', 'search Music','search Variety shows']
     actions = ['xiaoya_list','xiaoya_search','xiaoya_search','xiaoya_search','xiaoya_search','xiaoya_search','xiaoya_search','xiaoya_search']
-    paths = ['','','电影','电视剧','动漫','纪录片','音乐','综艺']
+    paths = [' ',' ','电影','电视剧','动漫','纪录片','音乐','综艺']
     for i,item in enumerate(items):
         # Create a list item with a text label and a thumbnail image.
         list_item = xbmcgui.ListItem(label=item)
@@ -1131,7 +1131,7 @@ def home_xiaoya(ip):
     url = get_url(action='home')
     is_folder = True
     xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
-    
+
     xbmcplugin.endOfDirectory(_handle)
 
 def list_xiaoya(ip,path):
