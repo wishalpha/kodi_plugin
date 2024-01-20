@@ -1101,6 +1101,7 @@ def get_content(file_path):
             'aac','flac','wav','wma','ogg','m4a']
     video_path=[]
     dir_path=[]
+    xbmc.log('grab in :'+file_path,xbmc.LOGERROR)
     dirs,files_list = xbmcvfs.listdir(file_path)
     for d in dirs:
         dir_path.append(os.path.join(file_path,d))
@@ -1109,7 +1110,8 @@ def get_content(file_path):
             video_path.append(os.path.join(file_path,item)) 
     return dir_path,video_path
 
-def search_content(file_path,keywords,dir_list=[]):    
+def search_content(file_path,keywords,dir_list=[]):
+    xbmc.log('search in :'+file_path,xbmc.LOGERROR)    
     dirs,files_list = xbmcvfs.listdir(file_path) 
     temp = []        
     for d in dirs:
