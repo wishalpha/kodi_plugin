@@ -1122,9 +1122,9 @@ def search_content(file_path,keywords,level,dir_list=[]):
     dirs,files_list = xbmcvfs.listdir(file_path) 
     temp = []        
     for d in dirs:
-        xbmc.log('search in :'+d,xbmc.LOGERROR)
+        #xbmc.log('search in :'+d,xbmc.LOGERROR)
         if keywords in to_text(os.path.basename(d)):
-            temp.append(d)
+            temp.append(os.path.join(file_path,d))
     for d in dirs:
         temp+=search_content(os.path.join(file_path,d),keywords,level-1,temp)
     return dir_list+temp
