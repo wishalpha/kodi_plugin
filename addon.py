@@ -33,7 +33,7 @@ def get_user_input():
 
 def get_ip():  
     file_path='server_list'
-    server_list = [‘127.0.0.1’,'192.168.1.253']
+    server_list = ['127.0.0.1','192.168.1.253']
     #with open(file_path, 'r') as file:
     #    for line in file:
     #        server_list.append(line.strip())
