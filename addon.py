@@ -1138,14 +1138,14 @@ def home_xiaoya(ip):
 def list_xiaoya(ip,path):
     server_path = f'dav://guest:guest_Api789@{ip}:5678'
     dir_path, video_path = get_content (os.path.join(server_path,path))
-    for path in dir_path:
-        list_item = xbmcgui.ListItem(label=os.path.basename(path))
-        url = get_url(action='xiaoya_list', ip=ip,path=path)
+    for p in dir_path:
+        list_item = xbmcgui.ListItem(label=os.path.basename(p))
+        url = get_url(action='xiaoya_list', ip=ip,path=p)
         is_folder = True   
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
-    for path in video_path:
-        list_item = xbmcgui.ListItem(label=os.path.basename(path))
-        url = get_url(action='play', video=path)
+    for p in video_path:
+        list_item = xbmcgui.ListItem(label=os.path.basename(p))
+        url = get_url(action='play', video=p)
         is_folder = False   
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
     list_item = xbmcgui.ListItem(label='Back to xiaoya Home')
@@ -1158,9 +1158,9 @@ def find_xiaoya(ip,path):
     server_path = f'dav://guest:guest_Api789@{ip}:5678'
     keywords = get_user_input()
     dir_path= search_content (os.path.join(server_path,path),keywords)
-    for path in dir_path:
-        list_item = xbmcgui.ListItem(label=os.path.basename(path))
-        url = get_url(action='xiaoya_list', ip=ip,path=path)
+    for p in dir_path:
+        list_item = xbmcgui.ListItem(label=os.path.basename(p))
+        url = get_url(action='xiaoya_list', ip=ip,path=p)
         is_folder = True   
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
     xbmcplugin.endOfDirectory(_handle)
