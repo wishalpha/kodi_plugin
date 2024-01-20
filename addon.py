@@ -1124,7 +1124,7 @@ def search_content(file_path,keywords,dir_list=[]):
         if keywords in to_text(os.path.basename(d)):
             temp.append(d)
     for d in dirs:
-        temp+=search_content(d,keywords,temp)
+        temp+=search_content(os.path.join(file_path,d),keywords,temp)
     return dir_list+temp
 def home_xiaoya(server_path):
     items = ['all','search','search Movies', 'search TV shows', 'search Comics', 'search Documentary', 'search Music','search Variety shows']
@@ -1144,7 +1144,10 @@ def home_xiaoya(server_path):
     xbmcplugin.endOfDirectory(_handle)
 
 def list_xiaoya(path):
-    
+    list_item = xbmcgui.ListItem(label='Back to xiaoya Home')
+    url = get_url(action='xiaoya_home')
+    is_folder = True
+    xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
     dir_path, video_path = get_content (path)
     for p in dir_path:
         list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
@@ -1156,14 +1159,14 @@ def list_xiaoya(path):
         url = get_url(action='play', video=p)
         is_folder = False   
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
+    
+    xbmcplugin.endOfDirectory(_handle)
+
+def find_xiaoya(path):
     list_item = xbmcgui.ListItem(label='Back to xiaoya Home')
     url = get_url(action='xiaoya_home')
     is_folder = True
     xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
-    xbmcplugin.endOfDirectory(_handle)
-
-def find_xiaoya(path):
-    
     keywords = get_user_input()
     dir_path= search_content (path,keywords)
     for p in dir_path:
