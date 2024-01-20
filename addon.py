@@ -1115,7 +1115,9 @@ def get_content(file_path):
             video_path.append(os.path.join(file_path,item)) 
     return dir_path,video_path
 
-def search_content(file_path,keywords,dir_list=[]):
+def search_content(file_path,keywords,level,dir_list=[]):
+    if level <= 0:
+        return []
     xbmc.log('search in :'+file_path,xbmc.LOGERROR)    
     dirs,files_list = xbmcvfs.listdir(file_path) 
     temp = []        
@@ -1124,11 +1126,11 @@ def search_content(file_path,keywords,dir_list=[]):
         if keywords in to_text(os.path.basename(d)):
             temp.append(d)
     for d in dirs:
-        temp+=search_content(os.path.join(file_path,d),keywords,temp)
+        temp+=search_content(os.path.join(file_path,d),keywords,level-1,temp)
     return dir_list+temp
 def home_xiaoya(server_path):
-    items = ['all','search','search Movies', 'search TV shows', 'search Comics', 'search Documentary', 'search Music','search Variety shows']
-    actions = ['xiaoya_list','xiaoya_search','xiaoya_search','xiaoya_search','xiaoya_search','xiaoya_search','xiaoya_search','xiaoya_search']
+    items = ['all','search','Movies', 'TV shows', 'Comics', 'Documentary', 'Music','Variety shows']
+    actions = ['xiaoya_list','xiaoya_search','xiaoya_list','xiaoya_list','xiaoya_list','xiaoya_list','xiaoya_list','xiaoya_list']
     paths = ['dav','dav','dav/电影','dav/电视剧','dav/动漫','dav/纪录片','dav/音乐','dav/综艺']
     for i,item in enumerate(items):
         # Create a list item with a text label and a thumbnail image.
@@ -1148,6 +1150,12 @@ def list_xiaoya(path):
     url = get_url(action='xiaoya_home')
     is_folder = True
     xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
+
+    list_item = xbmcgui.ListItem(label='search from here')
+    url = get_url(action='xiaoya_search',path=path)
+    is_folder = True
+    xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
+
     dir_path, video_path = get_content (path)
     for p in dir_path:
         list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
@@ -1162,13 +1170,14 @@ def list_xiaoya(path):
     
     xbmcplugin.endOfDirectory(_handle)
 
-def find_xiaoya(path):
+def find_xiaoya(path,level):
+
     list_item = xbmcgui.ListItem(label='Back to xiaoya Home')
     url = get_url(action='xiaoya_home')
     is_folder = True
     xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
     keywords = get_user_input()
-    dir_path= search_content (path,keywords)
+    dir_path= search_content (path,keywords,level)
     for p in dir_path:
         list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
         url = get_url(action='xiaoya_list', path=p)
@@ -1177,8 +1186,9 @@ def find_xiaoya(path):
     xbmcplugin.endOfDirectory(_handle)
 
 def play_video(path):
-    play_item = xbmcgui.ListItem(path=path)
-    xbmcplugin.setResolvedUrl(_handle, True, listitem=play_item)
+    #play_item = xbmcgui.ListItem(path=path)
+    #xbmcplugin.setResolvedUrl(_handle, True, listitem=play_item)
+    xbmc.player(path)
     
 
 def router(paramstring):
@@ -1199,8 +1209,9 @@ def router(paramstring):
             # Display the list of videos/folder in a xiaoya webdav.           
             list_xiaoya(params['path'])
         elif params['action'] == 'xiaoya_search':
-            # Display the list of videos/folder in a xiaoya webdav.           
-            find_xiaoya(params['path'])
+            # Display the list of videos/folder in a xiaoya webdav.
+            index = xbmcgui.Dialog().contextmenu(list=['search 2 level','search 3 level','search 4 level','search 5 level'])           
+            find_xiaoya(params['path'],index+2)
         elif params['action'] == 'xiaoya_home':
             # Display the list of videos/folder in a xiaoya webdav. 
                                   
@@ -1208,6 +1219,7 @@ def router(paramstring):
         elif params['action'] == 'play':
             # Play a video from a provided URL.
             play_video(params['video'])
+            
         elif params['action'] == 'home':
             # Play a video from a provided URL.
             home_list()
