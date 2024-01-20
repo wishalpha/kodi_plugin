@@ -1131,6 +1131,9 @@ def home_xiaoya(ip):
     url = get_url(action='home')
     is_folder = True
     xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
+    
+    xbmcplugin.endOfDirectory(_handle)
+
 def list_xiaoya(ip,path):
     server_path = f'dav://guest:guest_Api789@{ip}:5678/dav'
     dir_path, video_path = get_content (os.path.join(server_path,path))
