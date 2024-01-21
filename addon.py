@@ -1206,12 +1206,12 @@ def find_xiaoya(path):
 
 def play_video(path):
     
-    #play_item = xbmcgui.ListItem(path=path)
-    #xbmcplugin.setResolvedUrl(_handle, True, listitem=play_item)
-    video_url = path.split('@')[-1].split('dav/')
-    url = 'http://'+video_url[0]+video_url[1] 
-    xbmc.log('playing :'+to_text(url),xbmc.LOGERROR) 
-    xbmc.Player().play(path)
+    play_item = xbmcgui.ListItem(path=path)
+    xbmcplugin.setResolvedUrl(_handle, True, listitem=play_item)
+    #video_url = path.split('@')[-1].split('dav/')
+    #url = 'http://'+video_url[0]+video_url[1] 
+    #xbmc.log('playing :'+to_text(url),xbmc.LOGERROR) 
+    #xbmc.Player().play(path)
     
 
 def router(paramstring):
