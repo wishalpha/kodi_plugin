@@ -1168,7 +1168,8 @@ def list_xiaoya(path):
     for p in video_path:
         list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
         video_url = p.split('@')[-1].split('dav/')
-        url = get_url(action='play', video='http://'+video_url[0]+video_url[1])
+        #url = get_url(action='play', video='http://'+video_url[0]+video_url[1])
+        url = get_url(action='play', video=p)
         is_folder = False   
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
     list_item = xbmcgui.ListItem(label='Back Home')
@@ -1193,7 +1194,8 @@ def find_xiaoya(path):
     for p in video_path:
         list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
         video_url = p.split('@')[-1].split('dav/')
-        url = get_url(action='play', video='http://'+video_url[0]+video_url[1])
+        #url = get_url(action='play', video='http://'+video_url[0]+video_url[1])
+        url = get_url(action='play', video=p)
         is_folder = False   
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
     list_item = xbmcgui.ListItem(label='Back Home')
