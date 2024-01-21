@@ -1167,10 +1167,14 @@ def list_xiaoya(path):
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
     for p in video_path:
         list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
-        url = get_url(action='play', video='http://'+p.split('@')[-1])
+        video_url = p.split('@')[-1].split('dav/')
+        url = get_url(action='play', path='http://'+video_irl[0]+video_url[1])
         is_folder = False   
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
-    
+    list_item = xbmcgui.ListItem(label='Back Home')
+    url = get_url(action='home')
+    is_folder = True
+    xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
     xbmcplugin.endOfDirectory(_handle)
 
 def find_xiaoya(path):
@@ -1188,12 +1192,18 @@ def find_xiaoya(path):
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
     for p in video_path:
         list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
-        url = get_url(action='play', path='http://'+p.split('@')[-1])
+        video_url = p.split('@')[-1].split('dav/')
+        url = get_url(action='play', path='http://'+video_irl[0]+video_url[1])
         is_folder = False   
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
+    list_item = xbmcgui.ListItem(label='Back Home')
+    url = get_url(action='home')
+    is_folder = True
+    xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
     xbmcplugin.endOfDirectory(_handle)
 
 def play_video(path):
+    xbmc.log('playing :'+to_text(path),xbmc.LOGERROR) 
     play_item = xbmcgui.ListItem(path=path)
     xbmcplugin.setResolvedUrl(_handle, True, listitem=play_item)
     #xbmc.Player(path)
