@@ -50,7 +50,7 @@ def get_ip():
         return query
     return server_list[ip_index-1]
 def to_text (url_string):
-    return unquote(url_string,encoding='utf-8')
+    return unquote(url_string)
 def get_url(**kwargs):
     return '{0}?{1}'.format(_url, urlencode(kwargs))
 def get_home():
