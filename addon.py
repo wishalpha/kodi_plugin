@@ -1209,7 +1209,7 @@ def play_video(path):
     #play_item = xbmcgui.ListItem(path=path)
     #xbmcplugin.setResolvedUrl(_handle, True, listitem=play_item)
     video_url = p.split('@')[-1].split('dav/')
-    url = get_url(action='play', video='http://'+video_url[0]+video_url[1]) 
+    url = 'http://'+video_url[0]+video_url[1] 
     xbmc.log('playing :'+to_text(url),xbmc.LOGERROR) 
     xbmc.Player(url)
     
