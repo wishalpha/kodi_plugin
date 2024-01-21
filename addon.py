@@ -1108,11 +1108,11 @@ def get_content(file_path):
     for d in dirs:
         dir_path.append(os.path.join(file_path,d))
     for item in files_list: 
-        xbmc.log('grab in :'+item,xbmc.LOGERROR)
-        file_name = to_text(item)          
-        if file_name.split('.')[-1].lower() in types:
-            xbmc.log('matching with :'+item,xbmc.LOGERROR) 
-            video_path.append(os.path.join(file_path,item)) 
+        #xbmc.log('grab in :'+item,xbmc.LOGERROR)
+        #file_name = to_text(item)          
+        #if file_name.split('.')[-1].lower() in types:
+            #xbmc.log('matching with :'+item,xbmc.LOGERROR) 
+        video_path.append(os.path.join(file_path,item)) 
     return dir_path,video_path
 
 def search_content(file_path,keywords):
@@ -1167,7 +1167,7 @@ def list_xiaoya(path):
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
     for p in video_path:
         list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
-        url = get_url(action='play', video=p)
+        url = get_url(action='play', video='http://'+p.split('@')[-1])
         is_folder = False   
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
     
@@ -1188,7 +1188,7 @@ def find_xiaoya(path):
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
     for p in video_path:
         list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
-        url = get_url(action='play', path=p)
+        url = get_url(action='play', path='http://'+p.split('@')[-1])
         is_folder = False   
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
     xbmcplugin.endOfDirectory(_handle)
