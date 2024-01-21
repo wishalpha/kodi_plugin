@@ -1211,7 +1211,7 @@ def play_video(path):
     video_url = path.split('@')[-1].split('dav/')
     url = 'http://'+video_url[0]+video_url[1] 
     xbmc.log('playing :'+to_text(url),xbmc.LOGERROR) 
-    xbmc.Player().play(url)
+    xbmc.Player().play(path)
     
 
 def router(paramstring):
