@@ -1224,7 +1224,7 @@ def play_xiaoya(path):
     xbmcplugin.endOfDirectory(_handle)
 
     video_url = 'dav://'+path.split('@')[-1]
-    xbmc.log('playing :'+to_text(url),xbmc.LOGERROR) 
+    xbmc.log('***********playing :'+to_text(url),xbmc.LOGERROR) 
     xbmc.Player().play(video_url)    
 
 def router(paramstring):
