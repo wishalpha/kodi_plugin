@@ -1260,10 +1260,11 @@ def router(paramstring):
             play_video(params['video'])
         elif params['action'] == 'xiaoya_play':
             # Play a video from a provided URL.
-            #xbmc.log('Playing :'+to_text(params['video']),xbmc.LOGERROR)
-            xbmc.Player().play(params['path'])  
+            xbmc.log('Playing :'+to_text(params['path']),xbmc.LOGERROR)
+            
             #play_xiaoya(params['video'])
-            list_xiaoya(os.path.dirname(params['path']))    
+            list_xiaoya(os.path.dirname(params['path'])) 
+            xbmc.Player().play(params['path'])     
         elif params['action'] == 'home':
             # Play a video from a provided URL.
             home_list()
