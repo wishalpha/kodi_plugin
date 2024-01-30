@@ -50,7 +50,7 @@ def get_ip():
         return query
     return server_list[ip_index-1]
 def to_text (url_string):
-    return unquote(url_string,encoding='utf-8')
+    return unquote(url_string)
 def get_url(**kwargs):
     return '{0}?{1}'.format(_url, urlencode(kwargs))
 def get_home():
@@ -1108,11 +1108,11 @@ def get_content(file_path):
     for d in dirs:
         dir_path.append(os.path.join(file_path,d))
     for item in files_list: 
-        xbmc.log('grab in :'+item,xbmc.LOGERROR)
-        file_name = to_text(item)          
-        if file_name.split('.')[-1].lower() in types:
-            xbmc.log('matching with :'+item,xbmc.LOGERROR) 
-            video_path.append(os.path.join(file_path,item)) 
+        #xbmc.log('grab in :'+item,xbmc.LOGERROR)
+        #file_name = to_text(item)          
+        #if file_name.split('.')[-1].lower() in types:
+            #xbmc.log('matching with :'+item,xbmc.LOGERROR) 
+        video_path.append(os.path.join(file_path,item)) 
     return dir_path,video_path
 
 def search_content(file_path,keywords):
@@ -1167,10 +1167,15 @@ def list_xiaoya(path):
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
     for p in video_path:
         list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
-        url = get_url(action='play', video=p)
-        is_folder = False   
+        video_url = p.split('@')[-1].split('dav/')
+        #url = get_url(action='play', video='http://'+video_url[0]+video_url[1])
+        url = get_url(action='xiaoya_play', video=p)
+        is_folder = True   
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
-    
+    list_item = xbmcgui.ListItem(label='Back Home')
+    url = get_url(action='home')
+    is_folder = True
+    xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
     xbmcplugin.endOfDirectory(_handle)
 
 def find_xiaoya(path):
@@ -1188,16 +1193,39 @@ def find_xiaoya(path):
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
     for p in video_path:
         list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
-        url = get_url(action='play', path=p)
-        is_folder = False   
+        video_url = p.split('@')[-1].split('dav/')
+        #url = get_url(action='play', video='http://'+video_url[0]+video_url[1])
+        url = get_url(action='xiaoya_play', video=p)
+        is_folder = True   
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
+    list_item = xbmcgui.ListItem(label='Back Home')
+    url = get_url(action='home')
+    is_folder = True
+    xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
     xbmcplugin.endOfDirectory(_handle)
 
 def play_video(path):
+    
     play_item = xbmcgui.ListItem(path=path)
     xbmcplugin.setResolvedUrl(_handle, True, listitem=play_item)
-    #xbmc.Player(path)
-    
+    #video_url = path.split('@')[-1].split('dav/')
+    #url = 'http://'+video_url[0]+video_url[1] 
+    #xbmc.log('playing :'+to_text(url),xbmc.LOGERROR) 
+    #xbmc.Player().play(path)
+def play_xiaoya(path):
+    list_item = xbmcgui.ListItem(label='Back to xiaoya Home')
+    url = get_url(action='xiaoya_home')
+    is_folder = True
+    xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
+    list_item = xbmcgui.ListItem(label='Back Home')
+    url = get_url(action='home')
+    is_folder = True
+    xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
+    xbmcplugin.endOfDirectory(_handle)
+
+    video_url = 'dav://'+path.split('@')[-1]
+    xbmc.log('***********playing :'+to_text(url),xbmc.LOGERROR) 
+    xbmc.Player().play(video_url)    
 
 def router(paramstring):
     params = dict(parse_qsl(paramstring))
@@ -1223,12 +1251,15 @@ def router(paramstring):
         elif params['action'] == 'xiaoya_home':
             # Display the list of videos/folder in a xiaoya webdav. 
                                   
-            home_xiaoya(f'dav://guest:guest_Api789@{get_ip()}:5678')
+            home_xiaoya('dav://guest:guest_Api789@{}:5678'.format(get_ip()))
         elif params['action'] == 'play':
             # Play a video from a provided URL.
-            xbmc.log('Playing :'+to_text(params['video']),xbmc.LOGERROR)
+            #xbmc.log('Playing :'+to_text(params['video']),xbmc.LOGERROR)
             play_video(params['video'])
-            
+        elif params['action'] == 'xiaoya_play':
+            # Play a video from a provided URL.
+            #xbmc.log('Playing :'+to_text(params['video']),xbmc.LOGERROR)
+            play_xiaoya(params['video'])    
         elif params['action'] == 'home':
             # Play a video from a provided URL.
             home_list()
