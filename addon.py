@@ -1115,20 +1115,25 @@ def get_content(file_path):
         video_path.append(os.path.join(file_path,item)) 
     return dir_path,video_path
 
-def search_content(file_path,keywords):
-
-    xbmc.log('search in :'+file_path,xbmc.LOGERROR)    
+def search_content(file_path,keywords,level = 1):
+    if level <1 :
+        return [],[]
+    #xbmc.log('search in :'+file_path,xbmc.LOGERROR)    
     dirs,files_list = xbmcvfs.listdir(file_path) 
     temp = []
-    temp2=[]        
+    temp2=[] 
+    for d in files_list:
+        #xbmc.log('search in :'+d,xbmc.LOGERROR)
+        if keywords in to_text(os.path.basename(d)):
+            temp2.append(os.path.join(file_path,d))   
     for d in dirs:
         #xbmc.log('search in :'+d,xbmc.LOGERROR)
         if keywords in to_text(os.path.basename(d)):
             temp.append(os.path.join(file_path,d))
-    for d in files_list:
-        #xbmc.log('search in :'+d,xbmc.LOGERROR)
-        if keywords in to_text(os.path.basename(d)):
-            temp2.append(os.path.join(file_path,d))
+        subfolder,subfile = search_content(d,keywords,level-1)
+        temp+=subfolder 
+        temp2+ = subfile
+    
 
     return temp,temp2
 def home_xiaoya(server_path):
@@ -1186,7 +1191,12 @@ def find_xiaoya(path):
     is_folder = True
     xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
     keywords = get_user_input()
-    dir_path, video_path= search_content (path,keywords)
+    
+    level = xbmcgui.Dialog().contextmenu(list=['search in current directory','search in 2 level','search in 3 level',
+                                                    'search in 4 level','search in 5 level'])
+    if level == -1:
+        level = 0;
+    dir_path, video_path= search_content (path,keywords,level+1)
     for p in dir_path:
         list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
         url = get_url(action='xiaoya_list', path=p)
