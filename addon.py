@@ -1169,7 +1169,8 @@ def list_xiaoya(path):
         list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
         video_url = p.split('@')[-1].split('dav/')
         #url = get_url(action='play', video='http://'+video_url[0]+video_url[1])
-        url = get_url(action='xiaoya_play', video=p)
+        #url = get_url(action='xiaoya_play', video=p)
+        url = get_url(action='play', video=p)
         is_folder = True   
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
     list_item = xbmcgui.ListItem(label='Back Home')
@@ -1195,6 +1196,7 @@ def find_xiaoya(path):
         list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
         video_url = p.split('@')[-1].split('dav/')
         #url = get_url(action='play', video='http://'+video_url[0]+video_url[1])
+        #url = get_url(action='xiaoya_play', video=p)
         url = get_url(action='xiaoya_play', video=p)
         is_folder = True   
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
@@ -1259,7 +1261,9 @@ def router(paramstring):
         elif params['action'] == 'xiaoya_play':
             # Play a video from a provided URL.
             #xbmc.log('Playing :'+to_text(params['video']),xbmc.LOGERROR)
-            play_xiaoya(params['video'])    
+            xbmc.Player().play(params['path'])  
+            #play_xiaoya(params['video'])
+            list_xiaoya(os.path.dirname(params['path']))    
         elif params['action'] == 'home':
             # Play a video from a provided URL.
             home_list()
