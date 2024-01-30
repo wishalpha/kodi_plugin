@@ -1132,7 +1132,7 @@ def search_content(file_path,keywords,level = 1):
             temp.append(os.path.join(file_path,d))
         subfolder,subfile = search_content(d,keywords,level-1)
         temp+=subfolder 
-        temp2+ = subfile
+        temp2+= subfile
     
 
     return temp,temp2
