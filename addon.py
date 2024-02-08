@@ -1137,9 +1137,9 @@ def search_content(file_path,keywords,level = 1):
 
     return temp,temp2
 def home_xiaoya(server_path):
-    items = ['all','Search','Movies', 'TV shows', 'Comics', 'Documentary', 'Music','Variety shows']
-    actions = ['xiaoya_list','xiaoya_search','xiaoya_list','xiaoya_list','xiaoya_list','xiaoya_list','xiaoya_list','xiaoya_list']
-    paths = ['dav','dav','dav/电影','dav/电视剧','dav/动漫','dav/纪录片','dav/音乐','dav/综艺']
+    items = ['all','Search','xiaoya', 'PikPak', 'MyShare']
+    actions = ['xiaoya_list','xiaoya_search','xiaoya_list','xiaoya_list','xiaoya_list']
+    paths = ['dav','dav','dav/Net/Xiaoya','dav/pikpak','dav/Net/PikPakShare']
     for i,item in enumerate(items):
         # Create a list item with a text label and a thumbnail image.
         list_item = xbmcgui.ListItem(label=item)
@@ -1287,7 +1287,7 @@ def router(paramstring):
         elif params['action'] == 'xiaoya_home':
             # Display the list of videos/folder in a xiaoya webdav. 
                                   
-            home_xiaoya('dav://guest:guest_Api789@{}:5678'.format(get_ip()))
+            home_xiaoya('dav://admin:root@{}:5244'.format(get_ip()))
         elif params['action'] == 'play':
             # Play a video from a provided URL.
             #xbmc.log('Playing :'+to_text(params['video']),xbmc.LOGERROR)
