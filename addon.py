@@ -1287,7 +1287,7 @@ def router(paramstring):
         elif params['action'] == 'xiaoya_home':
             # Display the list of videos/folder in a xiaoya webdav. 
                                   
-            home_xiaoya('dav://guest:guest_Api789@{}:5678'.format(get_ip()))
+            home_xiaoya('dav://admin:root@{}:5244'.format(get_ip()))
         elif params['action'] == 'play':
             # Play a video from a provided URL.
             #xbmc.log('Playing :'+to_text(params['video']),xbmc.LOGERROR)
