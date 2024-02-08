@@ -1221,7 +1221,7 @@ def find_xiaoya(path):
 def search_xiaoya (path):
     server_ip = to_text(path).split('@')[-1].split(':')[0]
     search_string = get_user_input()
-    url = f'http://{server_ip}:5678/search?box={search_string}&url=&type=video'
+    url = 'http://{}:5678/search?box={}&url=&type=video'.format(server_ip,search_string)
     headers = {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
                         }
