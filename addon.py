@@ -1160,7 +1160,7 @@ def list_xiaoya(path):
     xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
 
     list_item = xbmcgui.ListItem(label='search from here')
-    url = get_url(action='xiaoya_search',path=path)
+    url = get_url(action='xiaoya_find',path=path)
     is_folder = True
     xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
 
@@ -1284,6 +1284,10 @@ def router(paramstring):
             # Display the list of videos/folder in a xiaoya webdav.
             #index = xbmcgui.Dialog().contextmenu(list=['search 2 level','search 3 level','search 4 level','search 5 level'])           
             search_xiaoya(params['path'])
+        elif params['action'] == 'xiaoya_find':
+            # Display the list of videos/folder in a xiaoya webdav.
+            #index = xbmcgui.Dialog().contextmenu(list=['search in current level','search 2 level','search 3 level','search 4 level'])           
+            find_xiaoya(params['path'],index+1)
         elif params['action'] == 'xiaoya_home':
             # Display the list of videos/folder in a xiaoya webdav. 
                                   
