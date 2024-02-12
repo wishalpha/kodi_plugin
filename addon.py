@@ -1124,11 +1124,11 @@ def search_content(file_path,keywords,level = 1):
     temp2=[] 
     for d in files_list:
         #xbmc.log('search in :'+d,xbmc.LOGERROR)
-        if keywords in to_text(os.path.basename(d)):
+        if keywords in to_text(d):
             temp2.append(os.path.join(file_path,d))   
-    for d in dirs:
+    for d in dirs[1:]:
         #xbmc.log('search in :'+d,xbmc.LOGERROR)
-        if keywords in to_text(os.path.basename(d)):
+        if keywords in to_text(d):
             temp.append(os.path.join(file_path,d))
         subfolder,subfile = search_content(os.path.join(file_path,d),keywords,level-1)
         temp+=subfolder 
@@ -1236,7 +1236,8 @@ def search_xiaoya (path):
     is_folder = True
     xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
 
-    for p in links:
+    for link in links:
+        p = link['href'].strip()
         list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
         url = get_url(action='xiaoya_list', path=os.path.join(path,p))
         is_folder = True   
