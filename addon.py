@@ -1124,11 +1124,11 @@ def search_content(file_path,keywords,level = 1):
     temp2=[] 
     for d in files_list:
         #xbmc.log('search in :'+d,xbmc.LOGERROR)
-        if keywords in to_text(os.path.basename(d)):
+        if keywords in to_text(d):
             temp2.append(os.path.join(file_path,d))   
-    for d in dirs:
+    for d in dirs[1:]:
         #xbmc.log('search in :'+d,xbmc.LOGERROR)
-        if keywords in to_text(os.path.basename(d)):
+        if keywords in to_text(d):
             temp.append(os.path.join(file_path,d))
         subfolder,subfile = search_content(os.path.join(file_path,d),keywords,level-1)
         temp+=subfolder 
@@ -1137,9 +1137,9 @@ def search_content(file_path,keywords,level = 1):
 
     return temp,temp2
 def home_xiaoya(server_path):
-    items = ['all','Search','Movies', 'TV shows', 'Comics', 'Documentary', 'Music','Variety shows']
-    actions = ['xiaoya_list','xiaoya_search','xiaoya_list','xiaoya_list','xiaoya_list','xiaoya_list','xiaoya_list','xiaoya_list']
-    paths = ['dav','dav','dav/电影','dav/电视剧','dav/动漫','dav/纪录片','dav/音乐','dav/综艺']
+    items = ['all','Search Xiaoya','xiaoya', 'PikPak', 'MyShare']
+    actions = ['xiaoya_list','xiaoya_search','xiaoya_list','xiaoya_list','xiaoya_list']
+    paths = ['dav','dav/Net/Xiaoya','dav/Net/Xiaoya','dav/pikpak','dav/Net/PikPakShare']
     for i,item in enumerate(items):
         # Create a list item with a text label and a thumbnail image.
         list_item = xbmcgui.ListItem(label=item)
@@ -1160,7 +1160,7 @@ def list_xiaoya(path):
     xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
 
     list_item = xbmcgui.ListItem(label='search from here')
-    url = get_url(action='xiaoya_search',path=path)
+    url = get_url(action='xiaoya_find',path=path)
     is_folder = True
     xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
 
@@ -1236,7 +1236,8 @@ def search_xiaoya (path):
     is_folder = True
     xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
 
-    for p in links:
+    for link in links:
+        p = link['href'].strip()
         list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
         url = get_url(action='xiaoya_list', path=os.path.join(path,p))
         is_folder = True   
@@ -1284,6 +1285,10 @@ def router(paramstring):
             # Display the list of videos/folder in a xiaoya webdav.
             #index = xbmcgui.Dialog().contextmenu(list=['search 2 level','search 3 level','search 4 level','search 5 level'])           
             search_xiaoya(params['path'])
+        elif params['action'] == 'xiaoya_find':
+            # Display the list of videos/folder in a xiaoya webdav.
+            #index = xbmcgui.Dialog().contextmenu(list=['search in current level','search 2 level','search 3 level','search 4 level'])           
+            find_xiaoya(params['path'])
         elif params['action'] == 'xiaoya_home':
             # Display the list of videos/folder in a xiaoya webdav. 
                                   
