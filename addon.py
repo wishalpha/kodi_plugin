@@ -1287,7 +1287,7 @@ def router(paramstring):
         elif params['action'] == 'xiaoya_find':
             # Display the list of videos/folder in a xiaoya webdav.
             #index = xbmcgui.Dialog().contextmenu(list=['search in current level','search 2 level','search 3 level','search 4 level'])           
-            find_xiaoya(params['path'],index+1)
+            find_xiaoya(params['path'])
         elif params['action'] == 'xiaoya_home':
             # Display the list of videos/folder in a xiaoya webdav. 
                                   
