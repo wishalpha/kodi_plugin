@@ -1137,9 +1137,9 @@ def search_content(file_path,keywords,level = 1):
 
     return temp,temp2
 def home_xiaoya(server_path):
-    items = ['all','Search','xiaoya', 'PikPak', 'MyShare']
+    items = ['all','Search Xiaoya','xiaoya', 'PikPak', 'MyShare']
     actions = ['xiaoya_list','xiaoya_search','xiaoya_list','xiaoya_list','xiaoya_list']
-    paths = ['dav','dav','dav/Net/Xiaoya','dav/pikpak','dav/Net/PikPakShare']
+    paths = ['dav','dav/Net/Xiaoya','dav/Net/Xiaoya','dav/pikpak','dav/Net/PikPakShare']
     for i,item in enumerate(items):
         # Create a list item with a text label and a thumbnail image.
         list_item = xbmcgui.ListItem(label=item)
