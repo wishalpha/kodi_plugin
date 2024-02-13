@@ -1124,11 +1124,11 @@ def search_content(file_path,keywords,level = 1):
     temp2=[] 
     for d in files_list:
         #xbmc.log('search in :'+d,xbmc.LOGERROR)
-        if keywords in to_text(d):
+        if keywords.lower() in to_text(d).lower():
             temp2.append(os.path.join(file_path,d))   
     for d in dirs[1:]:
         #xbmc.log('search in :'+d,xbmc.LOGERROR)
-        if keywords in to_text(d):
+        if keywords.lower() in to_text(d).lower():
             temp.append(os.path.join(file_path,d))
         subfolder,subfile = search_content(os.path.join(file_path,d),keywords,level-1)
         temp+=subfolder 
