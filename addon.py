@@ -39,7 +39,7 @@ def get_ip():
     #    for line in file:
     #        server_list.append(line.strip())
     ip_index= xbmcgui.Dialog().contextmenu(list=['new']+server_list)
-    if ip_index == 1:
+    if ip_index == 0:
         kb = xbmc.Keyboard('192.168.1.1', 'Please enter server ip')
         kb.doModal() # Onscreen keyboard appears
         if not kb.isConfirmed():
