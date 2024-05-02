@@ -1012,6 +1012,10 @@ def home_list():
     index = xbmcgui.Dialog().contextmenu(list=engines)
     if index == -1:
         index=0
+    list_item = xbmcgui.ListItem(label='local')
+    url = get_url(action='xiaoya_home')
+    is_folder = True
+    xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
     # Iterate through categories
     for category in categories:
         # Create a list item with a text label and a thumbnail image.
@@ -1027,10 +1031,7 @@ def home_list():
     xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
 
     
-    list_item = xbmcgui.ListItem(label='Xiaoya')
-    url = get_url(action='xiaoya_home')
-    is_folder = True
-    xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
+    
 
     xbmcplugin.endOfDirectory(_handle)
 
@@ -1237,7 +1238,8 @@ def search_xiaoya (path):
     xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
 
     for link in links:
-        p = link['href'].strip()
+        #p = link['href'].strip()
+        p = link.text.strip()
         list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
         url = get_url(action='xiaoya_list', path=os.path.join(path,p))
         is_folder = True   
