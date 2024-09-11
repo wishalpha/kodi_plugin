@@ -8,7 +8,7 @@ try:
 except ImportError:
     from urllib.parse import urlencode,quote,parse_qsl,unquote
 
-
+import datetime
 from bs4 import BeautifulSoup as BS
 from requests import get
 import xbmcgui
@@ -23,7 +23,7 @@ _handle = int(sys.argv[1])
 
 CATEGORIES = ["Movies", "TVshows","Comics","Entertainment","Search" ]
 engines =['wujinvod','pianku','feifan','taopian','shandian','liangzi','tiankong','guangsu','wolong']
-
+current_year = datetime.datetime.now().year
 def get_user_input():  
     kb = xbmc.Keyboard('', 'Please enter the video title')
     kb.doModal() # Onscreen keyboard appears
@@ -34,16 +34,16 @@ def get_user_input():
 
 def get_ip():  
     file_path='server_list'
-    server_list = ['127.0.0.1','192.168.1.253']
+    server_list = ['192.168.1.169','127.0.0.1','192.168.1.253']
     #with open(file_path, 'r') as file:
     #    for line in file:
     #        server_list.append(line.strip())
     ip_index= xbmcgui.Dialog().contextmenu(list=['new']+server_list)
     if ip_index == 0:
-        kb = xbmc.Keyboard('192.168.1.1', 'Please enter server ip')
+        kb = xbmc.Keyboard('192.168.1.', 'Please enter server ip')
         kb.doModal() # Onscreen keyboard appears
         if not kb.isConfirmed():
-            return '192.168.1.253'
+            return '192.168.1.169'
         query = kb.getText() # User input
     #    with open(file_path, 'a') as file:
     #        file.write(query+'\n')
@@ -601,10 +601,14 @@ def get_videos(category,index):
             region=['','大陆','香港','台湾','美国','法国','英国','日本','韩国','德国','泰国','法国','印度','丹麦','瑞典','荷兰','加拿大',
                     '俄罗斯','丹麦意大利','比利时','西班牙','澳大利亚','其他']
             r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
+            
+            
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = "https://www.pkmkv.com/ms/1-{}-{}-{}-----1---{}.html".format(region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
+        
         elif category == "TVshows":
             page=[ '','动作','喜剧','爱情','科幻','恐怖','剧情','战争','纪录','悬疑','犯罪','奇幻','冒险','儿童','动画','歌舞','音乐','惊悚',
                  '丧尸','传记','西部','灾难','古装','武侠','家庭','短片','校园','文艺','运动','青春','励志','人性','美食','女性','治愈','历史']
@@ -615,7 +619,8 @@ def get_videos(category,index):
             region=['','大陆','香港','台湾','美国','法国','英国','日本','韩国','德国','泰国','法国','印度','丹麦','瑞典','荷兰','加拿大',
                     '俄罗斯','丹麦意大利','比利时','西班牙','澳大利亚','其他']
             r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = "https://www.pkmkv.com/ms/2-{}-{}-{}-----1---{}.html".format(region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
@@ -629,7 +634,8 @@ def get_videos(category,index):
             region=['','大陆','香港','台湾','美国','法国','英国','日本','韩国','德国','泰国','法国','印度','丹麦','瑞典','荷兰','加拿大',
                     '俄罗斯','丹麦意大利','比利时','西班牙','澳大利亚','其他']
             r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = "https://www.pkmkv.com/ms/4-{}-{}-{}-----1---{}.html".format(region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
@@ -642,7 +648,8 @@ def get_videos(category,index):
             region=['','大陆','香港','台湾','美国','法国','英国','日本','韩国','德国','泰国','法国','印度','丹麦','瑞典','荷兰','加拿大',
                     '俄罗斯','丹麦意大利','比利时','西班牙','澳大利亚','其他']
             r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
             y=xbmcgui.Dialog().contextmenu(list=year)
             url = "https://www.pkmkv.com/ms/3-{}-{}-{}-----1---{}.html".format(region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
@@ -656,7 +663,8 @@ def get_videos(category,index):
             region=['','大陆','香港','台湾','美国','法国','英国','日本','韩国','德国','泰国','法国','印度','丹麦','瑞典','荷兰','加拿大',
                     '俄罗斯','丹麦意大利','比利时','西班牙','澳大利亚','其他']
             r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = "https://www.pkmkv.com/ms/1-{}-{}-{}-----1---{}.html".format(region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
@@ -677,7 +685,8 @@ def get_videos(category,index):
          
             region=['','大陆','香港','台湾','美国','法国','英国','日本','韩国','德国','泰国','印度','意大利','西班牙','加拿大','其他']
             r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = prefix+"/vodshow/{}-{}-{}-{}-----1---{}.html".format(str(rrr[pp]),region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
@@ -690,7 +699,8 @@ def get_videos(category,index):
             region=['全部','国产剧','港台剧','日韩剧','欧美剧','新马剧','泰国剧','其他剧','短剧']
             r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
             re=[2,14,15,16,42,26,43,65]
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010','2009','2008','2006','2005','2004']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010','2009','2008','2006','2005','2004']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = prefix+"/vodshow/{}--{}-{}-----1---{}.html".format(str(re[r]),sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
@@ -703,7 +713,8 @@ def get_videos(category,index):
             region=['全部','国产动漫','欧美动漫','日本动漫','韩国动漫','港台动漫','其他动漫']
             r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
             re=[4,33,34,35,36,39,55]
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010','2009','2008','2007','2006','2005','2004']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010','2009','2008','2007','2006','2005','2004']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = prefix+"/vodshow/{}--{}-{}-----1---{}.html".format(str(re[r]),sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
@@ -719,7 +730,8 @@ def get_videos(category,index):
             s=xbmcgui.Dialog().contextmenu(list=sorting)
          
             
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010','2009','2008','2007','2006','2005','2004']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010','2009','2008','2007','2006','2005','2004']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = prefix+"/vodshow/{}--{}-{}-----1---{}.html".format(str(re[r]),sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
@@ -733,7 +745,8 @@ def get_videos(category,index):
             region=['','大陆','香港','台湾','美国','法国','英国','日本','韩国','德国','泰国','法国','印度','丹麦','瑞典','荷兰','加拿大',
                     '俄罗斯','丹麦意大利','比利时','西班牙','澳大利亚','其他']
             r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = "https://www.pkmkv.com/ms/1-{}-{}-{}-----1---{}.html".format(region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
@@ -748,7 +761,8 @@ def get_videos(category,index):
             s=xbmcgui.Dialog().contextmenu(list=sorting)
             region=['','中国大陆','中国香港','中国台湾','美国','法国','英国','日本','韩国','德国','泰国','印度','其他']
             r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = "https://www.wjvod.com/vodshow/{}-{}-{}------1---{}.html".format(page[genre],region[r],sorting[s],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
@@ -758,7 +772,8 @@ def get_videos(category,index):
             region= xbmcgui.Dialog().contextmenu(list=cat)
             cat2=['time','hits','score']
             sorting=xbmcgui.Dialog().contextmenu(list=cat2)
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             if region == -1:
                 region == -2
@@ -771,7 +786,8 @@ def get_videos(category,index):
             cat2=['time','hits','score']
             sorting=xbmcgui.Dialog().contextmenu(list=cat2)
 
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011']
 
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             if region == -1:
@@ -784,7 +800,8 @@ def get_videos(category,index):
             region= xbmcgui.Dialog().contextmenu(list=cat)
             cat2=['time','hits','score']
             sorting=xbmcgui.Dialog().contextmenu(list=cat2)
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
 
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             if region == -1:
@@ -1138,9 +1155,12 @@ def search_content(file_path,keywords,level = 1):
 
     return temp,temp2
 def home_xiaoya(server_path):
-    items = ['all','Search Xiaoya','xiaoya', 'PikPak', 'MyShare']
+    #items = ['all','Search Xiaoya','xiaoya', 'PikPak', 'MyShare']
+    #actions = ['xiaoya_list','xiaoya_search','xiaoya_list','xiaoya_list','xiaoya_list']
+    #paths = ['dav','dav/Net/Xiaoya','dav/Net/Xiaoya','dav/pikpak','dav/Net/PikPakShare']
+    items = ['all','Search Xiaoya','Movies', 'TVShows', 'Documentary', 'Comics']
     actions = ['xiaoya_list','xiaoya_search','xiaoya_list','xiaoya_list','xiaoya_list']
-    paths = ['dav','dav/Net/Xiaoya','dav/Net/Xiaoya','dav/pikpak','dav/Net/PikPakShare']
+    paths = ['dav','dav','dav/电影','dav/电视剧','dav/纪录片','dav/教育/儿童合集']
     for i,item in enumerate(items):
         # Create a list item with a text label and a thumbnail image.
         list_item = xbmcgui.ListItem(label=item)
@@ -1294,7 +1314,8 @@ def router(paramstring):
         elif params['action'] == 'xiaoya_home':
             # Display the list of videos/folder in a xiaoya webdav. 
                                   
-            home_xiaoya('dav://admin:root@{}:5244'.format(get_ip()))
+            #home_xiaoya('dav://admin:root@{}:5244'.format(get_ip()))
+            home_xiaoya('http://guest:guestApi789@{}:5678'.format(get_ip()))
         elif params['action'] == 'play':
             # Play a video from a provided URL.
             #xbmc.log('Playing :'+to_text(params['video']),xbmc.LOGERROR)
