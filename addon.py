@@ -1,19 +1,20 @@
 # coding: utf-8
-import sys
+import sys,os
 
 try:
     from urllib import urlencode
-    from urllib import quote
+    from urllib import quote,unquote
     from urlparse import parse_qsl
 except ImportError:
-    from urllib.parse import urlencode,quote,parse_qsl
+    from urllib.parse import urlencode,quote,parse_qsl,unquote
 
-
+import datetime
 from bs4 import BeautifulSoup as BS
 from requests import get
 import xbmcgui
 import xbmcplugin
 import xbmc
+import xbmcvfs
 
 # Get the plugin url in plugin:// notation.
 _url = sys.argv[0]
@@ -22,7 +23,7 @@ _handle = int(sys.argv[1])
 
 CATEGORIES = ["Movies", "TVshows","Comics","Entertainment","Search" ]
 engines =['wujinvod','pianku','feifan','taopian','shandian','liangzi','tiankong','guangsu','wolong']
-
+current_year = datetime.datetime.now().year
 def get_user_input():  
     kb = xbmc.Keyboard('', 'Please enter the video title')
     kb.doModal() # Onscreen keyboard appears
@@ -31,6 +32,25 @@ def get_user_input():
     query = kb.getText() # User input
     return query
 
+def get_ip():  
+    file_path='server_list'
+    server_list = ['192.168.1.169','127.0.0.1','192.168.1.253']
+    #with open(file_path, 'r') as file:
+    #    for line in file:
+    #        server_list.append(line.strip())
+    ip_index= xbmcgui.Dialog().contextmenu(list=['new']+server_list)
+    if ip_index == 0:
+        kb = xbmc.Keyboard('192.168.1.', 'Please enter server ip')
+        kb.doModal() # Onscreen keyboard appears
+        if not kb.isConfirmed():
+            return '192.168.1.169'
+        query = kb.getText() # User input
+    #    with open(file_path, 'a') as file:
+    #        file.write(query+'\n')
+        return query
+    return server_list[ip_index-1]
+def to_text (url_string):
+    return unquote(url_string)
 def get_url(**kwargs):
     return '{0}?{1}'.format(_url, urlencode(kwargs))
 def get_home():
@@ -528,7 +548,7 @@ def get_videos(category,index):
         elif category == "Search":
             query = get_user_input() # User input via onscreen keyboard
             if not query:
-                return get_videos(category) # Return empty list if query is blank
+                return get_videos(category,index) # Return empty list if query is blank
             url = prefix+"/index.php/vod/search/page/1/wd/{}.html".format(quote(query)) # Change this to a valid url for search results that you want to scrape
             return get_video_list(url,engines[index])
     if engines[index] == 'taopian':
@@ -566,7 +586,7 @@ def get_videos(category,index):
         elif category == "Search":
             query = get_user_input() # User input via onscreen keyboard
             if not query:
-                return get_videos(category) # Return empty list if query is blank
+                return get_videos(category,index) # Return empty list if query is blank
             url = prefix+"/search.html?keyword={}&page=1".format(quote(query)) # Change this to a valid url for search results that you want to scrape
             return get_video_list(url,engines[index])
 
@@ -581,10 +601,14 @@ def get_videos(category,index):
             region=['','大陆','香港','台湾','美国','法国','英国','日本','韩国','德国','泰国','法国','印度','丹麦','瑞典','荷兰','加拿大',
                     '俄罗斯','丹麦意大利','比利时','西班牙','澳大利亚','其他']
             r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
+            
+            
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = "https://www.pkmkv.com/ms/1-{}-{}-{}-----1---{}.html".format(region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
+        
         elif category == "TVshows":
             page=[ '','动作','喜剧','爱情','科幻','恐怖','剧情','战争','纪录','悬疑','犯罪','奇幻','冒险','儿童','动画','歌舞','音乐','惊悚',
                  '丧尸','传记','西部','灾难','古装','武侠','家庭','短片','校园','文艺','运动','青春','励志','人性','美食','女性','治愈','历史']
@@ -595,7 +619,8 @@ def get_videos(category,index):
             region=['','大陆','香港','台湾','美国','法国','英国','日本','韩国','德国','泰国','法国','印度','丹麦','瑞典','荷兰','加拿大',
                     '俄罗斯','丹麦意大利','比利时','西班牙','澳大利亚','其他']
             r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = "https://www.pkmkv.com/ms/2-{}-{}-{}-----1---{}.html".format(region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
@@ -609,7 +634,8 @@ def get_videos(category,index):
             region=['','大陆','香港','台湾','美国','法国','英国','日本','韩国','德国','泰国','法国','印度','丹麦','瑞典','荷兰','加拿大',
                     '俄罗斯','丹麦意大利','比利时','西班牙','澳大利亚','其他']
             r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = "https://www.pkmkv.com/ms/4-{}-{}-{}-----1---{}.html".format(region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
@@ -622,7 +648,8 @@ def get_videos(category,index):
             region=['','大陆','香港','台湾','美国','法国','英国','日本','韩国','德国','泰国','法国','印度','丹麦','瑞典','荷兰','加拿大',
                     '俄罗斯','丹麦意大利','比利时','西班牙','澳大利亚','其他']
             r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
             y=xbmcgui.Dialog().contextmenu(list=year)
             url = "https://www.pkmkv.com/ms/3-{}-{}-{}-----1---{}.html".format(region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
@@ -636,7 +663,8 @@ def get_videos(category,index):
             region=['','大陆','香港','台湾','美国','法国','英国','日本','韩国','德国','泰国','法国','印度','丹麦','瑞典','荷兰','加拿大',
                     '俄罗斯','丹麦意大利','比利时','西班牙','澳大利亚','其他']
             r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = "https://www.pkmkv.com/ms/1-{}-{}-{}-----1---{}.html".format(region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
@@ -657,7 +685,8 @@ def get_videos(category,index):
          
             region=['','大陆','香港','台湾','美国','法国','英国','日本','韩国','德国','泰国','印度','意大利','西班牙','加拿大','其他']
             r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = prefix+"/vodshow/{}-{}-{}-{}-----1---{}.html".format(str(rrr[pp]),region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
@@ -670,7 +699,8 @@ def get_videos(category,index):
             region=['全部','国产剧','港台剧','日韩剧','欧美剧','新马剧','泰国剧','其他剧','短剧']
             r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
             re=[2,14,15,16,42,26,43,65]
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010','2009','2008','2006','2005','2004']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010','2009','2008','2006','2005','2004']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = prefix+"/vodshow/{}--{}-{}-----1---{}.html".format(str(re[r]),sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
@@ -683,7 +713,8 @@ def get_videos(category,index):
             region=['全部','国产动漫','欧美动漫','日本动漫','韩国动漫','港台动漫','其他动漫']
             r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
             re=[4,33,34,35,36,39,55]
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010','2009','2008','2007','2006','2005','2004']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010','2009','2008','2007','2006','2005','2004']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = prefix+"/vodshow/{}--{}-{}-----1---{}.html".format(str(re[r]),sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
@@ -699,7 +730,8 @@ def get_videos(category,index):
             s=xbmcgui.Dialog().contextmenu(list=sorting)
          
             
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010','2009','2008','2007','2006','2005','2004']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010','2009','2008','2007','2006','2005','2004']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = prefix+"/vodshow/{}--{}-{}-----1---{}.html".format(str(re[r]),sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
@@ -713,7 +745,8 @@ def get_videos(category,index):
             region=['','大陆','香港','台湾','美国','法国','英国','日本','韩国','德国','泰国','法国','印度','丹麦','瑞典','荷兰','加拿大',
                     '俄罗斯','丹麦意大利','比利时','西班牙','澳大利亚','其他']
             r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = "https://www.pkmkv.com/ms/1-{}-{}-{}-----1---{}.html".format(region[r],sorting[s],page[genre],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
@@ -728,7 +761,8 @@ def get_videos(category,index):
             s=xbmcgui.Dialog().contextmenu(list=sorting)
             region=['','中国大陆','中国香港','中国台湾','美国','法国','英国','日本','韩国','德国','泰国','印度','其他']
             r=xbmcgui.Dialog().contextmenu(list=['全部']+region[1:])
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             url = "https://www.wjvod.com/vodshow/{}-{}-{}------1---{}.html".format(page[genre],region[r],sorting[s],year[y]) # Change this to a valid url that you want to scrape
             return get_video_list(url,engines[index])
@@ -738,7 +772,8 @@ def get_videos(category,index):
             region= xbmcgui.Dialog().contextmenu(list=cat)
             cat2=['time','hits','score']
             sorting=xbmcgui.Dialog().contextmenu(list=cat2)
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011']
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             if region == -1:
                 region == -2
@@ -751,7 +786,8 @@ def get_videos(category,index):
             cat2=['time','hits','score']
             sorting=xbmcgui.Dialog().contextmenu(list=cat2)
 
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011']
 
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             if region == -1:
@@ -764,7 +800,8 @@ def get_videos(category,index):
             region= xbmcgui.Dialog().contextmenu(list=cat)
             cat2=['time','hits','score']
             sorting=xbmcgui.Dialog().contextmenu(list=cat2)
-            year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
+            year = [''] + [str(y) for y in range(current_year, current_year-15, -1)]
+            #year=['','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010']
 
             y=xbmcgui.Dialog().contextmenu(list=['全部']+year[1:])
             if region == -1:
@@ -774,7 +811,7 @@ def get_videos(category,index):
         elif category == "Search":
             query = get_user_input() # User input via onscreen keyboard
             if not query:
-                return get_videos(category) # Return empty list if query is blank
+                return get_videos(category,index) # Return empty list if query is blank
             url = "https://www.wjvod.com/vodsearch/{}----------1---.html".format(quote(query)) # Change this to a valid url for search results that you want to scrape
             return get_video_list(url,engines[index])
     elif engines[index] == 'shandian':
@@ -856,7 +893,7 @@ def get_videos(category,index):
         elif category == "Search":
             query = get_user_input() # User input via onscreen keyboard
             if not query:
-                return get_videos(category) # Return empty list if query is blank
+                return get_videos(category,index) # Return empty list if query is blank
             url = prefix+"/index.php/vod/search/page/1/wd/{}.html".format(quote(query)) # Change this to a valid url for search results that you want to scrape
             return get_video_list(url,engines[index])
     elif engines[index] == 'tiankong':
@@ -898,7 +935,7 @@ def get_videos(category,index):
         elif category == "Search":
             query = get_user_input() # User input via onscreen keyboard
             if not query:
-                return get_videos(category) # Return empty list if query is blank
+                return get_videos(category,index) # Return empty list if query is blank
             url = prefix+"vod/search/page/1/wd/{}.html".format(quote(query)) # Change this to a valid url for search results that you want to scrape
             return get_video_list(url,engines[index])
     elif engines[index] == 'guangsu':
@@ -941,7 +978,7 @@ def get_videos(category,index):
         elif category == "Search":
             query = get_user_input() # User input via onscreen keyboard
             if not query:
-                return get_videos(category) # Return empty list if query is blank
+                return get_videos(category,index) # Return empty list if query is blank
             url = prefix+"index.php/vod/search/page/1/wd/{}.html".format(quote(query)) # Change this to a valid url for search results that you want to scrape
             return get_video_list(url,engines[index])
     elif engines[index] == 'wolong':
@@ -983,7 +1020,7 @@ def get_videos(category,index):
         elif category == "Search":
             query = get_user_input() # User input via onscreen keyboard
             if not query:
-                return get_videos(category) # Return empty list if query is blank
+                return get_videos(category,index) # Return empty list if query is blank
             url = prefix+"index.php/vod/search/page/1/wd/{}.html".format(quote(query)) # Change this to a valid url for search results that you want to scrape
             return get_video_list(url,engines[index])
 
@@ -992,6 +1029,10 @@ def home_list():
     index = xbmcgui.Dialog().contextmenu(list=engines)
     if index == -1:
         index=0
+    list_item = xbmcgui.ListItem(label='local')
+    url = get_url(action='xiaoya_home')
+    is_folder = True
+    xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
     # Iterate through categories
     for category in categories:
         # Create a list item with a text label and a thumbnail image.
@@ -1001,12 +1042,20 @@ def home_list():
         is_folder = True
 
         xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
+    list_item = xbmcgui.ListItem(label='Change Engine')
+    url = get_url(action='home')
+    is_folder = True
+    xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
+
+    
+    
+
     xbmcplugin.endOfDirectory(_handle)
 
 
 def list_videos(category,index):
     
-    videos,_next,engin = get_videos(category,index)
+    videos,_next,engin = get_videos(category,int(index))
     for i,video in enumerate(videos):
         
         if engin == 'wujinvod':
@@ -1067,13 +1116,179 @@ def list_episode(e_url,engin):
     # xbmcplugin.addSortMethod(_handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     # Finish creating a virtual folder.
     xbmcplugin.endOfDirectory(_handle)
+def get_content(file_path):
+    types = ['mp4', 'mp3', 'mkv', 'avi', 'webm', 'mov','flv','ts','wmv','rm','m4v','3gp',
+            'aac','flac','wav','wma','ogg','m4a']
+    video_path=[]
+    dir_path=[]
+    xbmc.log('grab in :'+file_path,xbmc.LOGERROR)
+    dirs,files_list = xbmcvfs.listdir(file_path)
+    for d in dirs:
+        dir_path.append(os.path.join(file_path,d))
+    for item in files_list: 
+        #xbmc.log('grab in :'+item,xbmc.LOGERROR)
+        #file_name = to_text(item)          
+        #if file_name.split('.')[-1].lower() in types:
+            #xbmc.log('matching with :'+item,xbmc.LOGERROR) 
+        video_path.append(os.path.join(file_path,item)) 
+    return dir_path,video_path
+
+def search_content(file_path,keywords,level = 1):
+    if level <1 :
+        return [],[]
+    #xbmc.log('search in :'+file_path,xbmc.LOGERROR)    
+    dirs,files_list = xbmcvfs.listdir(file_path) 
+    temp = []
+    temp2=[] 
+    for d in files_list:
+        #xbmc.log('search in :'+d,xbmc.LOGERROR)
+        if keywords.lower() in to_text(d).lower():
+            temp2.append(os.path.join(file_path,d))   
+    for d in dirs[1:]:
+        #xbmc.log('search in :'+d,xbmc.LOGERROR)
+        if keywords.lower() in to_text(d).lower():
+            temp.append(os.path.join(file_path,d))
+        subfolder,subfile = search_content(os.path.join(file_path,d),keywords,level-1)
+        temp+=subfolder 
+        temp2+= subfile
+    
+
+    return temp,temp2
+def home_xiaoya(server_path):
+    #items = ['all','Search Xiaoya','xiaoya', 'PikPak', 'MyShare']
+    #actions = ['xiaoya_list','xiaoya_search','xiaoya_list','xiaoya_list','xiaoya_list']
+    #paths = ['dav','dav/Net/Xiaoya','dav/Net/Xiaoya','dav/pikpak','dav/Net/PikPakShare']
+    items = ['all','Search Xiaoya','Movies', 'TVShows', 'Documentary', 'Comics']
+    actions = ['xiaoya_list','xiaoya_search','xiaoya_list','xiaoya_list','xiaoya_list']
+    paths = ['dav','dav','dav/电影','dav/电视剧','dav/纪录片','dav/教育/儿童合集']
+    for i,item in enumerate(items):
+        # Create a list item with a text label and a thumbnail image.
+        list_item = xbmcgui.ListItem(label=item)
+        url = get_url(action=actions[i],path=os.path.join(server_path,paths[i]))
+        is_folder = True
+        xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
+    list_item = xbmcgui.ListItem(label='Back Home')
+    url = get_url(action='home')
+    is_folder = True
+    xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
+
+    xbmcplugin.endOfDirectory(_handle)
+
+def list_xiaoya(path):
+    list_item = xbmcgui.ListItem(label='Back to xiaoya Home')
+    url = get_url(action='xiaoya_home')
+    is_folder = True
+    xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
+
+    list_item = xbmcgui.ListItem(label='search from here')
+    url = get_url(action='xiaoya_find',path=path)
+    is_folder = True
+    xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
+
+    dir_path, video_path = get_content (path)
+    for p in dir_path[1:]:
+        list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
+        url = get_url(action='xiaoya_list', path=p)
+        is_folder = True   
+        xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
+    for p in video_path:
+        list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
+        video_url = p.split('@')[-1].split('dav/')
+        #url = get_url(action='play', video='http://'+video_url[0]+video_url[1])
+        #url = get_url(action='xiaoya_play', video=p)
+        #url = get_url(action='play', video='dav://'+p.split('@')[-1])
+        url = p
+        is_folder = False  
+        xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
+    list_item = xbmcgui.ListItem(label='Back Home')
+    url = get_url(action='home')
+    is_folder = True
+    xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
+    xbmcplugin.endOfDirectory(_handle)
+
+def find_xiaoya(path):
+
+    list_item = xbmcgui.ListItem(label='Back to xiaoya Home')
+    url = get_url(action='xiaoya_home')
+    is_folder = True
+    xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
+    keywords = get_user_input()
+    
+    level = xbmcgui.Dialog().contextmenu(list=['search in current directory','search in 2 level','search in 3 level',
+                                                    'search in 4 level','search in 5 level'])
+    if level == -1:
+        level = 0;
+    dir_path, video_path= search_content (path,keywords,level+1)
+    for p in dir_path:
+        list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
+        url = get_url(action='xiaoya_list', path=p)
+        is_folder = True   
+        xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
+    for p in video_path:
+        list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
+        #video_url = p.split('@')[-1].split('dav/')
+        #url = get_url(action='play', video='http://'+video_url[0]+video_url[1])
+        #url = get_url(action='xiaoya_play', video=p)
+        #url = get_url(action='play', video='dav://'+p.split('@')[-1])
+        url = p
+        is_folder = False   
+        xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
+    list_item = xbmcgui.ListItem(label='Back Home')
+    url = get_url(action='home')
+    is_folder = True
+    xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
+    xbmcplugin.endOfDirectory(_handle)
+
+def search_xiaoya (path):
+    server_ip = to_text(path).split('@')[-1].split(':')[0]
+    search_string = get_user_input()
+    url = f'http://{server_ip}:5678/search?box={search_string}&url=&type=video'
+    headers = {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                        }
+
+    response=get(url,headers=headers)
+
+    content=BS(response.content,'html.parser')
+    links = content.find_all('ul')[-1].find_all('a')
+
+    list_item = xbmcgui.ListItem(label='Back to xiaoya Home')
+    url = get_url(action='xiaoya_home')
+    is_folder = True
+    xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
+
+    for link in links:
+        #p = link['href'].strip()
+        p = link.text.strip()
+        list_item = xbmcgui.ListItem(label=to_text(os.path.basename(p)))
+        url = get_url(action='xiaoya_list', path=os.path.join(path,p))
+        is_folder = True   
+        xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder)
+
+    list_item = xbmcgui.ListItem(label='Back Home')
+    url = get_url(action='home')
+    is_folder = True
+    xbmcplugin.addDirectoryItem(_handle, url, list_item, is_folder) 
+    xbmcplugin.endOfDirectory(_handle)
+
+
 def play_video(path):
+    
     play_item = xbmcgui.ListItem(path=path)
     xbmcplugin.setResolvedUrl(_handle, True, listitem=play_item)
-    
+    #video_url = path.split('@')[-1].split('dav/')
+    #url = 'http://'+video_url[0]+video_url[1] 
+    #xbmc.log('playing :'+to_text(url),xbmc.LOGERROR) 
+    #xbmc.Player().play(path)
+def play_xiaoya(path):
+
+    video_url = 'dav://'+path.split('@')[-1]
+    play_item = xbmcgui.ListItem(path=video_url)
+    xbmcplugin.setResolvedUrl(_handle, True, listitem=play_item)
 
 def router(paramstring):
     params = dict(parse_qsl(paramstring))
+    
     # Check the parameters passed to the plugin
     if params:
         if params['action'] == 'searching':
@@ -1085,9 +1300,36 @@ def router(paramstring):
         elif params['action'] == 'listing_next':
             # Display the list of videos in a provided category.
             list_videos_next(params['url'],params['engin'])
+        elif params['action'] == 'xiaoya_list':
+            # Display the list of videos/folder in a xiaoya webdav.           
+            list_xiaoya(params['path'])
+        elif params['action'] == 'xiaoya_search':
+            # Display the list of videos/folder in a xiaoya webdav.
+            #index = xbmcgui.Dialog().contextmenu(list=['search 2 level','search 3 level','search 4 level','search 5 level'])           
+            search_xiaoya(params['path'])
+        elif params['action'] == 'xiaoya_find':
+            # Display the list of videos/folder in a xiaoya webdav.
+            #index = xbmcgui.Dialog().contextmenu(list=['search in current level','search 2 level','search 3 level','search 4 level'])           
+            find_xiaoya(params['path'])
+        elif params['action'] == 'xiaoya_home':
+            # Display the list of videos/folder in a xiaoya webdav. 
+                                  
+            #home_xiaoya('dav://admin:root@{}:5244'.format(get_ip()))
+            home_xiaoya('http://guest:guestApi789@{}:5678'.format(get_ip()))
         elif params['action'] == 'play':
             # Play a video from a provided URL.
+            #xbmc.log('Playing :'+to_text(params['video']),xbmc.LOGERROR)
             play_video(params['video'])
+        elif params['action'] == 'xiaoya_play':
+            # Play a video from a provided URL.
+            #xbmc.log('Playing :'+to_text(params['video']),xbmc.LOGERROR)
+            
+            play_xiaoya(params['video'])
+            #list_xiaoya(os.path.dirname(params['video'])) 
+            #xbmc.Player().play(params['video'])     
+        elif params['action'] == 'home':
+            # Play a video from a provided URL.
+            home_list()
         else:
             raise ValueError('Invalid paramstring: {0}!'.format(paramstring))
     else:
