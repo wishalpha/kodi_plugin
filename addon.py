@@ -1159,7 +1159,7 @@ def home_xiaoya(server_path):
     #actions = ['xiaoya_list','xiaoya_search','xiaoya_list','xiaoya_list','xiaoya_list']
     #paths = ['dav','dav/Net/Xiaoya','dav/Net/Xiaoya','dav/pikpak','dav/Net/PikPakShare']
     items = ['all','Search Xiaoya','Movies', 'TVShows', 'Documentary', 'Comics']
-    actions = ['xiaoya_list','xiaoya_search','xiaoya_list','xiaoya_list','xiaoya_list']
+    actions = ['xiaoya_list','xiaoya_search','xiaoya_list','xiaoya_list','xiaoya_list','xiaoya_list']
     paths = ['dav','dav','dav/电影','dav/电视剧','dav/纪录片','dav/教育/儿童合集']
     for i,item in enumerate(items):
         # Create a list item with a text label and a thumbnail image.
